@@ -22,14 +22,15 @@ export const metadata: Metadata = {
 
 export default async function RootLayout({
   children,
-  params: { locale },
+  params,
 }: Readonly<{
   children: React.ReactNode;
-  params: { locale: string };
+  params: Promise<{ locale: string }>;
 }>) {
+  const resolvedParams = await params; // Await the promise to get the actual params object
   const messages = await getMessages();
   return (
-    <html lang={locale}>
+    <html lang={resolvedParams.locale}> {/* Use resolvedParams.locale to get the string */}
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
