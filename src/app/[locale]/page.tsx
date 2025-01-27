@@ -8,10 +8,11 @@ type MessagesType = {
 };
 
 export async function generateMetadata({
-  params: { locale },
+  params,
 }: {
-  params: { locale: string };
+  params: Promise<{ locale: string }>;
 }) {
+  const { locale } = await params;
   const messages: MessagesType = await getMessages({ locale }) as MessagesType;
   const title = messages.NavbarLinks.homeTitle;
   return {
