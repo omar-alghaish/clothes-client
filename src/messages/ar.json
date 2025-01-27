@@ -1,0 +1,11 @@
+{
+    "NavbarLinks": {
+      "home": "الرئيسيه",
+      "homeTitle": "الصفحه الرئيسيه",
+      "about": "عنا",
+      "aboutTitle": "عنا"
+    },
+    "HomePage": {
+      "title": "arabic landing page"
+    }
+  }
