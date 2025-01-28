@@ -1,4 +1,3 @@
-// components/header/links-list.tsx (Updated)
 "use client";
 import { useTranslations } from "next-intl";
 import Link from "next/link";
@@ -24,7 +23,7 @@ const LinksList: FC<ILinkListProps> = ({ lang, className, onNavigate }) => {
 
   return (
     <nav>
-      <ul className={`flex ${className || ''}`}>
+      <ul className={`flex gap-6 ${className || ''}`}>
         {links.map((item, index) => {
           const isActive = pathname === item.href;
           return (
@@ -32,11 +31,12 @@ const LinksList: FC<ILinkListProps> = ({ lang, className, onNavigate }) => {
               <Link
                 href={item.href}
                 onClick={onNavigate}
-                className={
-                  isActive 
-                    ? "font-bold underline" 
-                    : "text-primary/60 hover:text-primary transition-colors"
-                }
+                className={`
+                  ${isActive 
+                    ? "font-semibold text-primary underline" 
+                    : "text-foreground/60 hover:text-primary transition-colors duration-200 ease-in-out"}
+                  text-lg
+                `}
               >
                 {item.title}
               </Link>

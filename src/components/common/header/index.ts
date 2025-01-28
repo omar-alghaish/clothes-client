@@ -1,1 +1,1 @@
-export {default as Header} from "./components/MainContent"
+export {default as Header} from "./components/MainContent";

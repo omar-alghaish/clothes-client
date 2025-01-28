@@ -3,9 +3,14 @@
       "home": "الرئيسيه",
       "homeTitle": "الصفحه الرئيسيه",
       "about": "عنا",
-      "aboutTitle": "عنا"
+      "aboutTitle": "عنا",
+      "shop":"المتجر",
+      "shopTitle":"المتجر",
+      "contact":"تواصل",
+      "contactTitle":"تواصل"
     },
     "HomePage": {
-      "title": "arabic landing page"
+      "title": "الصفحه الرئيسيه"
     }
+ 
   }
