@@ -3,7 +3,11 @@
       "home": "Home",
       "homeTitle": "Home page",
       "about": "About",
-      "aboutTitle": "About page"
+      "aboutTitle": "About page",
+      "shop":"Shop",
+      "shopTitle":"Shop page",
+      "contact":"Contact",
+      "contactTitle":"Contact page"
     },
     "HomePage": {
       "title": "Landing page"
