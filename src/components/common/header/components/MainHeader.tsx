@@ -6,6 +6,8 @@ import { Button } from "@/components/ui/button";
 import { CloudUpload, Search } from "lucide-react";
 import LinksList from "./LinksList";
 import Logo from "../../logo";
+import { ChangeLang } from "../../changeLang";
+import ThemeToggle from "../../toggleTheme";
 
 export const MainHeader = () => {
   const locale = useLocale();
@@ -15,6 +17,8 @@ export const MainHeader = () => {
       <Logo />
       <LinksList lang={locale} className="gap-8" />
       <div className="flex gap-4 items-center">
+        <ThemeToggle />
+        <ChangeLang />
         <div className="relative">
           <Input
           className=""

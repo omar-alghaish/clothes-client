@@ -10,6 +10,9 @@
       "contactTitle":"Contact page"
     },
     "HomePage": {
-      "title": "Landing page"
+      "title": "Landing page",
+      "section1":{
+"heading":"Build Your Perfect Wardrobe with Trendy and Timeless Styles"
+      }
     }
   }
