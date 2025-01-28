@@ -1,0 +1,1 @@
+export {default as ChangeLang} from "./components/MainContent"

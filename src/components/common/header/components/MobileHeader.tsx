@@ -8,6 +8,8 @@ import Logo from "../../logo";
 import LinksList from "./LinksList";
 import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
+import { ChangeLang } from "../../changeLang";
+import ThemeToggle from "../../toggleTheme";
 
 export const MobileHeader = () => {
   const locale = useLocale();
@@ -16,18 +18,22 @@ export const MobileHeader = () => {
   return (
     <div className="md:hidden flex justify-between items-center p-4 w-full">
       {/* Menu Button */}
-      <Menu
-        className="h-6 w-6 cursor-pointer"
-        onClick={() => setIsMenuOpen(true)}
-      />
+      <div className="flex items-center gap-4">
+        <Menu
+          className="h-6 w-6 cursor-pointer"
+          onClick={() => setIsMenuOpen(true)}
+        />
 
-      {/* Logo */}
-      <Logo />
+        {/* Logo */}
+        <Logo />
+      </div>
 
-      {/* Login Button - Visible on mobile outside sidebar */}
-      <Button variant="outline" className="!px-3">
-        Login
-      </Button>
+      <div className="flex items-center gap-4">
+        <ThemeToggle />
+        <Button variant="outline" className="!px-3">
+          Login
+        </Button>
+      </div>
 
       {/* Sidebar */}
       {isMenuOpen && (
@@ -60,6 +66,8 @@ export const MobileHeader = () => {
             className="flex-col gap-4"
             onNavigate={() => setIsMenuOpen(false)}
           />
+
+          <ChangeLang />
         </div>
       </div>
     </div>

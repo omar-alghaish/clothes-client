@@ -1,16 +1,18 @@
 {
-    "NavbarLinks": {
-      "home": "الرئيسيه",
-      "homeTitle": "الصفحه الرئيسيه",
-      "about": "عنا",
-      "aboutTitle": "عنا",
-      "shop":"المتجر",
-      "shopTitle":"المتجر",
-      "contact":"تواصل",
-      "contactTitle":"تواصل"
-    },
-    "HomePage": {
-      "title": "الصفحه الرئيسيه"
+  "NavbarLinks": {
+    "home": "الرئيسيه",
+    "homeTitle": "الصفحه الرئيسيه",
+    "about": "عنا",
+    "aboutTitle": "عنا",
+    "shop": "المتجر",
+    "shopTitle": "المتجر",
+    "contact": "تواصل",
+    "contactTitle": "تواصل"
+  },
+  "HomePage": {
+    "title": "الصفحه الرئيسيه",
+    "section1": {
+      "heading": "ابني خزانة ملابسك المثالية مع الأنماط العصرية والخالدة"
     }
- 
   }
+}
