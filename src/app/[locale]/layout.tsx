@@ -4,6 +4,7 @@ import { NextIntlClientProvider } from "next-intl";
 import { getMessages } from "next-intl/server";
 import "../../styles/globals.css";
 import { ReduxProvider } from "@/redux/reduxProvider";
+import { Footer, Header } from "@/components/common";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -36,7 +37,9 @@ export default async function RootLayout({
       >
         <NextIntlClientProvider messages={messages}>
           <ReduxProvider>
+            <Header />
             <div> {children}</div>
+            <Footer />
           </ReduxProvider>
         </NextIntlClientProvider>
       </body>
