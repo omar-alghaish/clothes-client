@@ -16,6 +16,7 @@ const Header = () => {
       } top-0 z-50 w-full transition-all`}
     >
       {isMobile ? <MobileHeader /> : <MainHeader />}
+      
     </header>
   );
 };

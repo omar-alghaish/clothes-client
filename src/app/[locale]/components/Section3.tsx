@@ -5,7 +5,7 @@ import img2 from "../../../assets/brandIcons/hm.png";
 const Section3 = () => {
   return (
     <section>
-      <div className="container flex flex-col gap-10 py-20 px-4">
+      <div className="container flex flex-col gap-10 py-10 px-4">
       <div className="flex flex-col items-center gap-6">
   <h1 className="text-5xl font-extrabold text-gray-900 dark:text-white">
     New Arrival
