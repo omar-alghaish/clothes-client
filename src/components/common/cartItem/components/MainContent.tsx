@@ -80,7 +80,7 @@ const MainContent: FC<CartitemProps> = ({
           );
         })}
       </div>
-      <Button className="mt-2 bg-secondary text-secondary-foreground">Add to cart</Button>
+      <Button className="mt-2 bg-secondary text-secondary-foreground hover:text-secondary-foreground/70 hover:bg-secondary/70">Add to cart</Button>
     </div>
   );
 };

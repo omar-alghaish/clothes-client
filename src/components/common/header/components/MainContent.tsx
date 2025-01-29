@@ -7,16 +7,15 @@ import { useScrollPosition } from "@/hooks/useScrollPosition";
 
 const Header = () => {
   const { isMobile } = useViewport();
-  const isScrolled = useScrollPosition(50); // Change threshold if needed
+  const { isScrolled, isScrollingUp } = useScrollPosition(50); // 50px threshold
 
   return (
     <header
-      className={`${
-        isScrolled ? "sticky bg-background border-b" : "absolute bg-transparent"
-      } top-0 z-50 w-full transition-all`}
+      className={`fixed top-0 z-50 w-full transition-transform duration-300 ${
+        isScrollingUp ? "translate-y-0" : "-translate-y-full"
+      } ${isScrolled ? "bg-background border-b" : "bg-transparent"}`}
     >
       {isMobile ? <MobileHeader /> : <MainHeader />}
-      
     </header>
   );
 };
