@@ -12,7 +12,7 @@ const Section2 = () => {
   const icons = [icon1, icon2, icon3, icon4, icon5, icon6, icon7];
 
   return (
-    <section className="py-20">
+    <section className="py-10">
       <div className="container mx-auto flex flex-wrap items-center justify-center gap-6 md:gap-10">
         {icons.map((item, index) => (
           <div key={index} className="w-16 md:w-24 lg:w-28">

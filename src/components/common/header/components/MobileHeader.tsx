@@ -3,18 +3,17 @@
 import { useState } from "react";
 import { useLocale } from "next-intl";
 import { Button } from "@/components/ui/button";
-import { Menu, X } from "lucide-react";
+import { Bell, Heart, Menu, ShoppingBasket, UserRound, X } from "lucide-react";
 import Logo from "../../logo";
 import LinksList from "./LinksList";
-import { Input } from "@/components/ui/input";
-import { Search } from "lucide-react";
 import { ChangeLang } from "../../changeLang";
 import ThemeToggle from "../../toggleTheme";
+import SearchInput from "./SearchInput";
 
 export const MobileHeader = () => {
   const locale = useLocale();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-
+const user = true
   return (
     <div className="md:hidden flex justify-between items-center p-4 w-full">
       {/* Menu Button */}
@@ -30,9 +29,8 @@ export const MobileHeader = () => {
 
       <div className="flex items-center gap-4">
         <ThemeToggle />
-        <Button variant="outline" className="!px-3">
-          Login
-        </Button>
+        {user ? <div className="flex gap-4 items-center"><ShoppingBasket className="text-primary/80" size={20}/><Heart  className="text-primary/80" size={20}/> <Bell className="text-primary/80" size={20}/><UserRound className="text-primary/80" size={20}/></div> :         <Button variant="outline">Login</Button>}
+
       </div>
 
       {/* Sidebar */}
@@ -56,11 +54,7 @@ export const MobileHeader = () => {
         </div>
 
         <div className="p-4 space-y-6">
-          <Input
-            icon={<Search className="h-4 w-4" />}
-            iconPosition="left"
-            placeholder="Search..."
-          />
+        <SearchInput />
           <LinksList
             lang={locale}
             className="flex-col gap-4"

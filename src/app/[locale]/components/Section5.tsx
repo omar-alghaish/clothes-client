@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 const Section5 = () => {
   return (
     <section>
-      <div className="relative py-20 ">
+      <div className="relative py-10 ">
         <Image
           width={1800}
           height={1200}

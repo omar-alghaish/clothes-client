@@ -6,7 +6,7 @@ import b3 from "../../../assets/backgrounds/b4.jpg";
 
 const Section6 = () => {
   return (
-    <section className="container mx-auto px-4 py-20">
+    <section className="container mx-auto px-4 py-10">
       <div className="flex flex-col md:flex-row gap-6 h-auto md:h-[110vh] overflow-hidden">
         {/* Left Large Item */}
         <div className="w-full md:w-[40%] h-[60vh] md:h-full relative">
