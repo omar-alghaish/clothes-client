@@ -1,4 +1,4 @@
-import { useTranslations } from "next-intl";
+// import { useTranslations } from "next-intl";
 import { getMessages } from "next-intl/server";
 import Section1 from "./components/Section1";
 import Section2 from "./components/Section2";
@@ -27,7 +27,7 @@ export async function generateMetadata({
 }
 
 export default function Home() {
-  const t = useTranslations("HomePage");
+  // const t = useTranslations("HomePage");
   return (
     <div className="">
       <Section1 />
@@ -36,7 +36,7 @@ export default function Home() {
       <Section4 />
       <Section5 />
       <Section6/>
-      <h1 className="text-3xl font-bold mb-8">{t("title")}</h1>
+      {/* <h1 className="text-3xl font-bold mb-8">{t("title")}</h1> */}
     </div>
   );
 }

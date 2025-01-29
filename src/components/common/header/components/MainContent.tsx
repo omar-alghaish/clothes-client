@@ -11,9 +11,9 @@ const Header = () => {
 
   return (
     <header
-      className={`fixed top-0 z-50 w-full transition-transform duration-300 h-[100vh]  ${
+      className={`fixed top-0 z-50 w-full transition-transform duration-300   ${
         isScrollingUp ? "translate-y-0" : "-translate-y-full"
-      } ${isScrolled ? "bg-background border-b" : "bg-transparent"} ${isMobile ? "h-[100vh]" : "h-max"}`}
+      } ${isScrolled ? "bg-background border-b" : "bg-transparent"} `}
     >
       {isMobile ? <MobileHeader /> : <MainHeader />}
     </header>

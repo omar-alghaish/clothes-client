@@ -1,6 +1,6 @@
 //mobile-header.tsx (Mobile Version)
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useLocale } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Bell, Heart, Menu, ShoppingBasket, UserRound, X } from "lucide-react";
@@ -13,7 +13,18 @@ import SearchInput from "./SearchInput";
 export const MobileHeader = () => {
   const locale = useLocale();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-const user = true
+  useEffect(() => {
+    if (isMenuOpen) {
+      document.body.classList.add("overflow-hidden");
+    } else {
+      document.body.classList.remove("overflow-hidden");
+    }
+
+    return () => {
+      document.body.classList.remove("overflow-hidden");
+    };
+  }, [isMenuOpen]);
+  const user = true;
   return (
     <div className="md:hidden flex justify-between items-center p-4 w-full">
       {/* Menu Button */}
@@ -29,20 +40,28 @@ const user = true
 
       <div className="flex items-center gap-4">
         <ThemeToggle />
-        {user ? <div className="flex gap-4 items-center"><ShoppingBasket className="text-primary/80" size={20}/><Heart  className="text-primary/80" size={20}/> <Bell className="text-primary/80" size={20}/><UserRound className="text-primary/80" size={20}/></div> :         <Button variant="outline">Login</Button>}
-
+        {user ? (
+          <div className="flex gap-4 items-center">
+            <ShoppingBasket className="text-primary/80" size={20} />
+            <Heart className="text-primary/80" size={20} />{" "}
+            <Bell className="text-primary/80" size={20} />
+            <UserRound className="text-primary/80" size={20} />
+          </div>
+        ) : (
+          <Button variant="outline">Login</Button>
+        )}
       </div>
 
       {/* Sidebar */}
       {isMenuOpen && (
         <div
-          className="fixed inset-0 bg-black/50 z-40"
+          className="fixed inset-0 bg-black/50 z-40 h-[100vh]"
           onClick={() => setIsMenuOpen(false)}
         />
       )}
 
       <div
-        className={`fixed top-0 left-0 h-full w-[70vw] bg-background  z-50 transform transition-transform ${
+        className={`fixed top-0 left-0 h-[100vh] w-[70vw] bg-background  z-50 transform transition-transform duration-300 ${
           isMenuOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
@@ -54,7 +73,7 @@ const user = true
         </div>
 
         <div className="p-4 space-y-6">
-        <SearchInput />
+          <SearchInput />
           <LinksList
             lang={locale}
             className="flex-col gap-4"
