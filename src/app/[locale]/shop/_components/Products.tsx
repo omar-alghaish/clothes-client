@@ -2,7 +2,6 @@ import { CartItem } from '@/components/common'
 import React from 'react'
 import img from "../../../../assets/images/i1.jpg"
 import img2 from "../../../../assets/brandIcons/hm.png";
-import { Pagination } from '@/components/common/pagination';
 
 const ITEMS_PER_PAGE = 8
 
@@ -12,8 +11,7 @@ const Products = ({ searchParams }: { searchParams?: { page?: string } }) => {
   console.log(currentPage)
   
   // Replace with your actual data fetching
-  const totalItems = 100 // Replace with real count from your API
-  const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE)
+  
 
   return (
     <div className="space-y-6 flex flex-col gap-10">
@@ -30,7 +28,7 @@ const Products = ({ searchParams }: { searchParams?: { page?: string } }) => {
         ))}
       </div>
       
-      <Pagination totalPages={totalPages} />
+
     </div>
   )
 }

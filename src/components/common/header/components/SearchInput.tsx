@@ -40,14 +40,18 @@ const SearchInput = () => {
           <SheetTitle>Search</SheetTitle>
         </SheetHeader>
         <div className="grid gap-4 py-4">
-          <Input icon={<Search />}/>
+          <Input icon={<Search />} />
           {/* suugests */}
           <div>
             <div>
               <h1 className="font-extrabold">Recently Searched</h1>
-              <div className="flex gap-4 mt-2">
+              <div className="flex gap-4 mt-2 flex-wrap">
                 {recently.map((item, index) => (
-                  <Button variant="outline" key={index} className=" rounded-xl t">
+                  <Button
+                    variant="outline"
+                    key={index}
+                    className=" rounded-xl t"
+                  >
                     {item}
                   </Button>
                 ))}
@@ -56,9 +60,13 @@ const SearchInput = () => {
 
             <div className="mt-6">
               <h1 className="font-extrabold">Trending Searches</h1>
-              <div className="flex gap-4 mt-2">
+              <div className="flex gap-4 mt-2 flex-wrap">
                 {trending.map((item, index) => (
-                  <Button variant="outline" key={index} className=" rounded-xl t">
+                  <Button
+                    variant="outline"
+                    key={index}
+                    className=" rounded-xl t"
+                  >
                     {item}
                   </Button>
                 ))}
@@ -67,16 +75,18 @@ const SearchInput = () => {
 
             <div className="mt-6">
               <h1 className="font-extrabold">Popular Categories</h1>
-              <div className="flex gap-4 mt-2">
+              <div className="flex gap-4 mt-2 flex-wrap">
                 {popular.map((item, index) => (
-                  <Button variant="outline" key={index} className=" rounded-xl t">
+                  <Button
+                    variant="outline"
+                    key={index}
+                    className=" rounded-xl t"
+                  >
                     {item}
                   </Button>
                 ))}
               </div>
             </div>
-
-            
           </div>
         </div>
       </SheetContent>
