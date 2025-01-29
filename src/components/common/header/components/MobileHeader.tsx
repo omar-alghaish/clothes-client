@@ -42,7 +42,7 @@ const user = true
       )}
 
       <div
-        className={`fixed top-0 left-0 h-full w-64 bg-background z-50 transform transition-transform ${
+        className={`fixed top-0 left-0 h-full w-[70vw] bg-background  z-50 transform transition-transform ${
           isMenuOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
