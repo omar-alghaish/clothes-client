@@ -26,6 +26,7 @@ const Section4 = () => {
                 brandImage={img2.src}
                 price={"35"}
                 rating={"4.5"}
+                id="1"
               />
             ))}
           </div>
