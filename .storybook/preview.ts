@@ -2,9 +2,9 @@
 import { Preview } from '@storybook/react';
 import { INITIAL_VIEWPORTS } from '@storybook/addon-viewport';
 import "../src/styles/globals.css"
-
 const preview: Preview = {
   parameters: {
+  
     actions: { argTypesRegex: '^on[A-Z].*' },
     viewport: {
       viewports: {

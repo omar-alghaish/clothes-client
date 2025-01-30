@@ -47,7 +47,6 @@ export const Mobile: Story = {
     },
   },
   play: async () => {
-    // Force mobile viewport detection
     window.innerWidth = 360;
     window.dispatchEvent(new Event('resize'));
   },

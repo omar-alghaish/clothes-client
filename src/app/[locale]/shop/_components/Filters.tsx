@@ -254,12 +254,12 @@ const Filters = () => {
     <div className="w-full border p-4 rounded-lg">
       <Accordion type="multiple" className="w-full">
         {/* Category Filter */}
-        <AccordionItem value="category">
+        <AccordionItem value="category" className="border-none">
           <AccordionTrigger>Category</AccordionTrigger>
           <AccordionContent>
             <Accordion type="multiple" className="pl-4">
               {/* Men's Category */}
-              <AccordionItem value="men">
+              <AccordionItem value="men" className="border-none">
                 <div className="flex items-center gap-2">
                   <Checkbox
                     checked={menAllSelected}
@@ -283,7 +283,7 @@ const Filters = () => {
               </AccordionItem>
 
               {/* Women's Category */}
-              <AccordionItem value="women">
+              <AccordionItem value="women" className="border-none">
                 <div className="flex items-center gap-2">
                   <Checkbox
                     checked={womenAllSelected}
@@ -310,7 +310,7 @@ const Filters = () => {
         </AccordionItem>
 
       {/* Color Filter */}
-      <AccordionItem value="color">
+      <AccordionItem value="color" className="border-none" >
           <AccordionTrigger>Color</AccordionTrigger>
           <AccordionContent className="flex flex-col space-y-2">
             {colors.map((color) => (
@@ -327,7 +327,7 @@ const Filters = () => {
         </AccordionItem>
 
         {/* Size Filter */}
-        <AccordionItem value="size">
+        <AccordionItem value="size" className="border-none">
           <AccordionTrigger>Size</AccordionTrigger>
           <AccordionContent className="flex flex-wrap gap-2">
             {sizes.map((size) => (
@@ -343,7 +343,7 @@ const Filters = () => {
         </AccordionItem>
 
         {/* Brand Filter */}
-        <AccordionItem value="brand">
+        <AccordionItem value="brand" className="border-none">
           <AccordionTrigger>Brand</AccordionTrigger>
           <AccordionContent className="flex flex-col space-y-2">
             {brands.map((brand) => (
@@ -360,7 +360,7 @@ const Filters = () => {
         </AccordionItem>
 
         {/* Price Filter */}
-        <AccordionItem value="price">
+        <AccordionItem value="price" className="border-none">
           <AccordionTrigger>Price</AccordionTrigger>
           <AccordionContent className="flex flex-col space-y-2">
             {prices.map((price) => (

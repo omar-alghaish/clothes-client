@@ -24,6 +24,7 @@ const Products = ({ searchParams }: { searchParams?: { page?: string } }) => {
             brandImage={img2.src}
             price={"35"}
             rating={"3.5"}
+            id='1'
           />
         ))}
       </div>
