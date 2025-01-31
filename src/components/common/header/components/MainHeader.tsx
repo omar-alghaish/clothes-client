@@ -22,7 +22,7 @@ export const MainHeader = () => {
         <ChangeLang />
         <SearchInput />
         {user ? (
-          <div className="flex gap-4 items-center">
+          <div className="flex  gap-4 items-center ">
             <ShoppingBasket className="text-primary/80" size={20} />
             <Link href={`/${locale}/favorites`}>
               <Heart className="text-primary/80" size={20} />

@@ -9,6 +9,7 @@ import LinksList from "./LinksList";
 import { ChangeLang } from "../../changeLang";
 import ThemeToggle from "../../toggleTheme";
 import SearchInput from "./SearchInput";
+import Link from "next/link";
 
 export const MobileHeader = () => {
   const locale = useLocale();
@@ -43,9 +44,13 @@ export const MobileHeader = () => {
         {user ? (
           <div className="flex gap-4 items-center">
             <ShoppingBasket className="text-primary/80" size={20} />
-            <Heart className="text-primary/80" size={20} />{" "}
+            <Link href={`/${locale}/favorites`}>
+              <Heart className="text-primary/80" size={20} />
+            </Link>
             <Bell className="text-primary/80" size={20} />
-            <UserRound className="text-primary/80" size={20} />
+            <Link href={`/${locale}/profile`}>
+              <UserRound className="text-primary/80" size={20} />
+            </Link>
           </div>
         ) : (
           <Button variant="outline">Login</Button>
