@@ -8,10 +8,11 @@ import { ChangeLang } from "../../changeLang";
 import ThemeToggle from "../../toggleTheme";
 import SearchInput from "./SearchInput";
 import { Bell, Heart, ShoppingBasket, UserRound } from "lucide-react";
+import Link from "next/link";
 
 export const MainHeader = () => {
   const locale = useLocale();
- const user  = true
+  const user = true;
   return (
     <div className="hidden md:flex justify-between items-center p-3 lg:p-4 w-full">
       <Logo />
@@ -19,18 +20,21 @@ export const MainHeader = () => {
       <div className="flex gap-6 items-center">
         <ThemeToggle />
         <ChangeLang />
-        {/* <div className="relative">
-          <Input
-          className=""
-            icon={<Search className="h-4 w-4" />}
-            iconPosition="left"
-            placeholder="Search..."
-          />
-          <CloudUpload className="absolute right-2 top-2.5 h-5 w-5 cursor-pointer" />
-        </div> */}
         <SearchInput />
-        {user ? <div className="flex gap-4 items-center"><ShoppingBasket className="text-primary/80" size={20}/><Heart  className="text-primary/80" size={20}/> <Bell className="text-primary/80" size={20}/><UserRound className="text-primary/80" size={20}/></div> :         <Button variant="outline">Login</Button>}
-
+        {user ? (
+          <div className="flex  gap-4 items-center ">
+            <ShoppingBasket className="text-primary/80" size={20} />
+            <Link href={`/${locale}/favorites`}>
+              <Heart className="text-primary/80" size={20} />
+            </Link>
+            <Bell className="text-primary/80" size={20} />
+            <Link href={`/${locale}/profile`}>
+              <UserRound className="text-primary/80" size={20} />
+            </Link>
+          </div>
+        ) : (
+          <Button variant="outline">Login</Button>
+        )}
       </div>
     </div>
   );
