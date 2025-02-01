@@ -17,6 +17,7 @@ interface IEditImage {
   formik: FormikProps<FormValues>;
 }
 const EditImage: FC<IEditImage> = ({ formik }) => {
+    console.log(formik)
   const [image, setImage] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
