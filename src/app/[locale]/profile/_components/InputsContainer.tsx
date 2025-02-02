@@ -4,13 +4,22 @@ import { Label } from "@/components/ui/label";
 import React, { FC } from "react";
 import { FormikProps } from "formik";
 import { Separator } from "@/components/ui/separator";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface FormValues {
   firstName: string;
   lastName: string;
   email: string;
   phone: string;
-  avatar:string
+  avatar: string;
+  avatarFile: File | null;
+  gender: string;
 }
 
 interface IInputsContainer {
@@ -23,7 +32,7 @@ const InputsContainer: FC<IInputsContainer> = ({ formik }) => {
       <div className="flex flex-col lg:flex-row gap-6 ">
         {/* First Name */}
         <div className="space-y-2 flex-1">
-          <Label>First Name *</Label>
+          <Label>First Name</Label>
           <Input
             name="firstName"
             placeholder="Ex. Sora"
@@ -38,7 +47,7 @@ const InputsContainer: FC<IInputsContainer> = ({ formik }) => {
 
         {/* Last Name */}
         <div className="space-y-2 flex-1">
-          <Label>Last Name *</Label>
+          <Label>Last Name</Label>
           <Input
             name="lastName"
             placeholder="Ex. Salah"
@@ -54,7 +63,7 @@ const InputsContainer: FC<IInputsContainer> = ({ formik }) => {
       <Separator />
       {/* Email */}
       <div className="space-y-2">
-        <Label>Email *</Label>
+        <Label>Email</Label>
         <Input
           name="email"
           type="email"
@@ -70,7 +79,7 @@ const InputsContainer: FC<IInputsContainer> = ({ formik }) => {
       <Separator />
       {/* Phone */}
       <div className="space-y-2">
-        <Label>Phone *</Label>
+        <Label>Phone</Label>
         <Input
           name="phone"
           placeholder="Enter Phone Number"
@@ -81,6 +90,23 @@ const InputsContainer: FC<IInputsContainer> = ({ formik }) => {
         {formik.touched.phone && formik.errors.phone && (
           <p className="text-red-500 text-sm">{formik.errors.phone}</p>
         )}
+      </div>
+      <Separator />
+
+      <div className="space-y-2">
+        <Label>Gender</Label>
+        <Select
+          value={formik.values.gender}
+          onValueChange={(value) => formik.setFieldValue("gender", value)}
+        >
+          <SelectTrigger>
+            <SelectValue placeholder="Select Gender" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="male">Male</SelectItem>
+            <SelectItem value="female">Female</SelectItem>
+          </SelectContent>
+        </Select>
       </div>
     </div>
   );

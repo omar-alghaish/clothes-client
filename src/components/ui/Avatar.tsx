@@ -51,7 +51,7 @@ const Avatar = ({
           alt={alt}
           width={size * 4}
           height={size * 4}
-          className={`object-cover w-12 h-12 ${
+          className={`object-cover w-12 h-12 ${className} ${
             shape === 'circle' ? 'rounded-full' : 'rounded-md'
           }`}
           onError={handleError}
@@ -60,7 +60,7 @@ const Avatar = ({
       ) : (
         <div
           className={`${shape === 'circle' ? 'rounded-full' : 'rounded-md'} 
-          bg-gray-300 dark:bg-gray-600 flex items-center justify-center ${sizeClasses}`}
+          bg-gray-300 dark:bg-gray-600 flex items-center justify-center ${className} ${sizeClasses}`}
         >
           <span className={`font-medium text-gray-700 dark:text-gray-200 ${textSize}`}>
             {getFallbackText()}
