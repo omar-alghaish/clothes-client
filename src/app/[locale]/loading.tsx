@@ -22,21 +22,33 @@ export default function Loading() {
       {/* Main loader */}
       <div className="relative z-10 flex flex-col items-center gap-6">
         {/* Spinner with gradient */}
-        <div className={cn(
+        {/* <div className={cn(
           "w-16 h-16 rounded-full animate-spin",
           "border-4 border-solid border-primary/10",
           "border-t-primary border-r-primary",
           "transition-all duration-500 ease-in-out"
-        )} />
+        )} /> */}
+          <div className="flex items-center gap-2 mt-4">
+          {[...Array(3)].map((_, i) => (
+            <div
+              key={i}
+              className={cn(
+                "w-2 h-2 lg:w-3 lg:h-3 rounded-full bg-primary/30",
+                "animate-pulse"
+              )}
+              style={{ animationDelay: `${i * 0.2}s` }}
+            />
+          ))}
+        </div>
 
         {/* Animated text */}
         <div className="flex flex-col items-center gap-2">
-          <h1 className={cn(
+          {/* <h1 className={cn(
             "text-xl font-semibold tracking-tight",
             "animate-pulse delay-75"
           )}>
             Loading...
-          </h1>
+          </h1> */}
           <p className={cn(
             "text-sm text-muted-foreground",
             "animate-pulse delay-150"
@@ -46,7 +58,7 @@ export default function Loading() {
         </div>
 
         {/* Progress dots */}
-        <div className="flex items-center gap-2 mt-4">
+        {/* <div className="flex items-center gap-2 mt-4">
           {[...Array(3)].map((_, i) => (
             <div
               key={i}
@@ -57,7 +69,7 @@ export default function Loading() {
               style={{ animationDelay: `${i * 0.2}s` }}
             />
           ))}
-        </div>
+        </div> */}
       </div>
     </div>
   )
