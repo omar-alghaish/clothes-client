@@ -19,7 +19,7 @@ const Order: FC<IOrderProps> = ({ order }) => {
   return (
     <div className="border rounded-md ">
       <div className="relative">
-        <div className="w-full h-[150px]">
+        <div className="w-full h-[300px] md:h-[150px]">
           <Image
             src={background.src}
             className="w-full h-full object-cover"
@@ -28,22 +28,22 @@ const Order: FC<IOrderProps> = ({ order }) => {
             alt="backgroudn"
           />
         </div>
-        <div className="top-1/2  transform translate-y-[-50%]  absolute flex flex-wrap justify-between w-full px-4 lg:px-14">
-          <div>
+        <div className="top-1/2  transform translate-y-[-50%] gap-4  absolute flex flex-wrap justify-between w-full px-4 lg:px-14">
+          <div className="min-w-[150px]">
             <p className="text-gray-600 text-xl">Order ID</p>
             <h1 className="text-2xl font-extrabold">{order.id}</h1>
           </div>
-          <div>
-            <p className="text-gray-600 text-xl">Order ID</p>
-            <h1 className="text-2xl font-extrabold">{order.id}</h1>
+          <div className="min-w-[150px]">
+            <p className="text-gray-600 text-xl">Payment Method</p>
+            <h1 className="text-2xl font-extrabold">{order.method}</h1>
           </div>
-          <div>
-            <p className="text-gray-600 text-xl">Order ID</p>
-            <h1 className="text-2xl font-extrabold">{order.id}</h1>
+          <div className="min-w-[150px]">
+            <p className="text-gray-600 text-xl">Total Payment</p>
+            <h1 className="text-2xl font-extrabold">{order.total}</h1>
           </div>
-          <div>
-            <p className="text-gray-600 text-xl">Order ID</p>
-            <h1 className="text-2xl font-extrabold">{order.id}</h1>
+          <div className="min-w-[150px]">
+            <p className="text-gray-600 text-xl">Estimated Delivery Date</p>
+            <h1 className="text-2xl font-extrabold">{order.date}</h1>
           </div>
         </div>
       </div>

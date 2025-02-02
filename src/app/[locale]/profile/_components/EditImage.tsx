@@ -3,22 +3,23 @@ import Avatar from "@/components/ui/Avatar";
 import { Button } from "@/components/ui/button";
 import { FormikProps } from "formik";
 import { Upload } from "lucide-react";
-import React, { FC, useRef, useState } from "react";
+import React, { FC, useRef } from "react";
 
 interface FormValues {
-    firstName: string;
-    lastName: string;
-    email: string;
-    phone: string;
-    avatar:string
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+  avatar: string;
+  avatarFile: File | null;
+  gender: string;
 }
 
 interface IEditImage {
   formik: FormikProps<FormValues>;
 }
+
 const EditImage: FC<IEditImage> = ({ formik }) => {
-    console.log(formik)
-  const [image, setImage] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -26,16 +27,16 @@ const EditImage: FC<IEditImage> = ({ formik }) => {
     if (file) {
       const reader = new FileReader();
       reader.onload = (e) => {
-        if (e.target?.result) {
-          setImage(e.target.result as string);
-        }
+        formik.setFieldValue("avatar", e.target?.result as string);
       };
       reader.readAsDataURL(file);
+      formik.setFieldValue("avatarFile", file);
     }
   };
 
   const handleRemoveImage = () => {
-    setImage(null);
+    formik.setFieldValue("avatar", "");
+    formik.setFieldValue("avatarFile", null);
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
     }
@@ -44,7 +45,13 @@ const EditImage: FC<IEditImage> = ({ formik }) => {
   return (
     <div className="space-y-4">
       <div className="gap-4">
-        <Avatar size={50} src={image || ""} />
+        <div className="flex flex-col items-center w-max gap-4">
+          <Avatar
+            className="w-[100px] h-[100px]"
+            src={formik.values.avatar || ""}
+          />
+          <h1 className="text-xl font-extrabold">profile picture</h1>
+        </div>
         <input
           type="file"
           ref={fileInputRef}
@@ -66,7 +73,7 @@ const EditImage: FC<IEditImage> = ({ formik }) => {
             type="button"
             onClick={handleRemoveImage}
             variant="secondary"
-            disabled={!image}
+            disabled={!formik.values.avatar}
           >
             Remove
           </Button>
