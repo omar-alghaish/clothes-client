@@ -43,7 +43,9 @@ export const MobileHeader = () => {
         <ThemeToggle />
         {user ? (
           <div className="flex gap-4 items-center">
-            <ShoppingBasket className="text-primary/80" size={20} />
+            <Link href={`/${locale}/cart`}>
+              <ShoppingBasket className="text-primary/80" size={20} />
+            </Link>
             <Link href={`/${locale}/favorites`}>
               <Heart className="text-primary/80" size={20} />
             </Link>
