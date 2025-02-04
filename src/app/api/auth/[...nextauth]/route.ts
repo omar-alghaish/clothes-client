@@ -1,22 +1,23 @@
-import NextAuth from "next-auth";
+import NextAuth, { AuthOptions } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import FacebookProvider from "next-auth/providers/facebook";
-// import { NextRequest } from "next/server";
 
-export const authOptions = {
+// Define the options for NextAuth
+const options: AuthOptions = {
     providers: [
         GoogleProvider({
-            clientId: process.env.GOOGLE_CLIENT_ID || '',
-            clientSecret: process.env.GOOGLE_CLIENT_SECRET || '',
+            clientId: process.env.GOOGLE_CLIENT_ID || '' as string,
+            clientSecret: process.env.GOOGLE_CLIENT_SECRET || '' as string,
         }),
         FacebookProvider({
-            clientId: process.env.FACEBOOK_CLIENT_ID || '',
-            clientSecret: process.env.FACEBOOK_CLIENT_SECRET || '',
-        })
+            clientId: process.env.FACEBOOK_CLIENT_ID || '' as string,
+            clientSecret: process.env.FACEBOOK_CLIENT_SECRET || '' as string,
+        }),
     ],
-    secret: process.env.SECRET,
+    secret: process.env.SECRET || '',
 };
 
-const handler = NextAuth(authOptions);
+// Create the NextAuth handler
+const authHandler= NextAuth(options)
 
-export { handler as GET, handler as POST };
+export { authHandler as GET, authHandler as POST }

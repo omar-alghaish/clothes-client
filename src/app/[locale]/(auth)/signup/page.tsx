@@ -43,7 +43,7 @@ const Signup = () => {
     }  if(isError){
         toast.error("error")
       }
-  }, [isSuccess, data, router, locale, error]);
+  }, [isSuccess, data, router, locale, error, isError]);
 
 
   const formik = useFormik({
