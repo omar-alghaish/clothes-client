@@ -11,27 +11,10 @@ import { Bell, Heart, ShoppingBasket, UserRound } from "lucide-react";
 import Link from "next/link";
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
-import { useSession } from "next-auth/react";
-import { useSocialAuthMutation } from "@/redux/features/auth/authApi";
-import { useEffect } from "react";
 
 export const MainHeader = () => {
   const locale = useLocale();
   const { user } = useSelector((state: RootState) => state.auth);
-  const { data } = useSession();
-  const [socialAuth, { }] = useSocialAuthMutation();
-
-  useEffect(() => {
-    if (!user) {
-      if (data && data.user) {
-        socialAuth({
-          email: data.user.email,
-          name: data.user.name,
-          avatar: data.user?.image,
-        });
-      }
-    }
-  }, [data, user, socialAuth]); // Added socialAuth to the dependency array
 
   return (
     <div className="hidden md:flex justify-between items-center p-3 lg:p-4 w-full">

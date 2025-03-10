@@ -7,7 +7,8 @@
       "shop":"Shop",
       "shopTitle":"Shop page",
       "contact":"Contact",
-      "contactTitle":"Contact page"
+      "contactTitle":"Contact page",
+      "services":"Services"
     },
     "HomePage": {
       "title": "Landing page",

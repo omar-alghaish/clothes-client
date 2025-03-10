@@ -7,7 +7,10 @@
     "shop": "المتجر",
     "shopTitle": "المتجر",
     "contact": "تواصل",
-    "contactTitle": "تواصل"
+    "contactTitle": "تواصل",
+    "services":"خدمات"
+
+
   },
   "HomePage": {
     "title": "الصفحه الرئيسيه",

@@ -17,6 +17,7 @@ const LinksList: FC<ILinkListProps> = ({ lang, className, onNavigate }) => {
   const links = [
     { href: `/${lang}`, title: t('home') },
     { href: `/${lang}/shop`, title: t('shop') },
+    { href: `/${lang}/services`, title: t('services') },
     { href: `/${lang}/about`, title: t('about') },
     { href: `/${lang}/contact`, title: t('contact') },
   ];
