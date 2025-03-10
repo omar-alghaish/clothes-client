@@ -1,96 +1,49 @@
-import { apiSlice } from "../api/apiSlice";
-import { userLoggedIn, userRegistration } from "./authSlice";
+// src/redux/features/auth/authApi.js
+import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
-type RegistrationResponse = {
-  message: string;
-  activationToken: string;
-};
+const BASE_URL = "https://clothes-server-production.up.railway.app/api/v1";
 
-type RegistrationData = {
-  email: string;
-  password: string;
-  name: string;
-};
-
-export const authApi = apiSlice.injectEndpoints({
+export const authApi = createApi({
+  reducerPath: "authApi",
+  baseQuery: fetchBaseQuery({
+    baseUrl: BASE_URL,
+    prepareHeaders: (headers, { getState }) => {
+      // Get token from state
+      const token = (getState() as { auth: { token: string } }).auth.token;
+      
+      // If token exists, add authorization header
+      if (token) {
+        headers.set("authorization", `Bearer ${token}`);
+      }
+      
+      return headers;
+    },
+  }),
   endpoints: (builder) => ({
-    register: builder.mutation<RegistrationResponse, RegistrationData>({
-      query: (data) => ({
-        url: "registraion",
-        method: "POST",
-        body: data,
-        credentials: "include" as const,
-      }),
-      async onQueryStarted(arg, { queryFulfilled, dispatch }) {
-        try {
-          const result = await queryFulfilled;
-          dispatch(userRegistration({ token: result.data.activationToken }));
-        } catch (error) {
-          console.log(error);
-        }
-      },
-    }),
-    activation: builder.mutation({
-      query: ({ activation_token, activation_code }) => ({
-        url: "activate-user",
+    register: builder.mutation({
+      query: (userData) => ({
+        url: "/users/register",
         method: "POST",
         body: {
-          activation_token,
-          activation_code,
+          name: userData.name,
+          email: userData.email,
+          password: userData.password,
+          passwordConfirm: userData.confirmPassword, // Adjusting field name to match API expectations
+          role: "user", // Default role
         },
       }),
     }),
     login: builder.mutation({
-      query: ({ email, password }) => ({
-        url: "/login",
+      query: (credentials) => ({
+        url: "/users/login",
         method: "POST",
-        body: {
-          email,
-          password,
-        },
-        credentials: "include" as const,
+        body: credentials,
       }),
-      async onQueryStarted(arg, { queryFulfilled, dispatch }) {
-        try {
-          const result = await queryFulfilled;
-          dispatch(
-            userLoggedIn({
-              accessToken: result.data.activationToken,
-              user: result.data.user,
-            })
-          );
-        } catch (error) {
-          console.log(error);
-        }
-      },
     }),
-    socialAuth: builder.mutation({
-        query: ({ email, name, avatar }) => ({
-          url: "/social-auth",
-          method: "POST",
-          body: {
-            email,
-            name,
-            avatar,
-          },
-          credentials: "include" as const,
-        }),
-        async onQueryStarted(arg, { queryFulfilled, dispatch }) {
-          try {
-            const result = await queryFulfilled;
-            dispatch(
-              userLoggedIn({
-                accessToken: result.data.activationToken,
-                user: result.data.user,
-              })
-            );
-          } catch (error) {
-            console.log(error);
-          }
-        },
-      }),
+    getMe: builder.query({
+      query: () => "/users/me",
+    }),
   }),
 });
 
-export const { useRegisterMutation, useActivationMutation, useLoginMutation, useSocialAuthMutation } =
-  authApi;
+export const { useRegisterMutation, useLoginMutation, useGetMeQuery } = authApi;
