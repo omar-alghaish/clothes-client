@@ -1,7 +1,7 @@
 // src/redux/features/auth/authApi.js
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { BASE_URL } from "../api/baseQuery";
 
-const BASE_URL = "https://clothes-server-production.up.railway.app/api/v1";
 
 export const authApi = createApi({
   reducerPath: "authApi",
@@ -10,12 +10,12 @@ export const authApi = createApi({
     prepareHeaders: (headers, { getState }) => {
       // Get token from state
       const token = (getState() as { auth: { token: string } }).auth.token;
-      
+
       // If token exists, add authorization header
       if (token) {
         headers.set("authorization", `Bearer ${token}`);
       }
-      
+
       return headers;
     },
   }),
@@ -40,10 +40,21 @@ export const authApi = createApi({
         body: credentials,
       }),
     }),
-    getMe: builder.query({
-      query: () => "/users/me",
+    updateUser: builder.mutation({
+      query: (values) => {
+        console.log("updateUser called with:", values); // Log values here
+        return {
+          url: "/users/updateMe",
+          method: "PATCH",
+          body: values,
+        };
+      },
+    }),
+    
+    getMe: builder.query<any, void>({
+      query: () => '/users/getMe',
     }),
   }),
 });
 
-export const { useRegisterMutation, useLoginMutation, useGetMeQuery } = authApi;
+export const { useRegisterMutation, useLoginMutation, useGetMeQuery ,useUpdateUserMutation} = authApi;

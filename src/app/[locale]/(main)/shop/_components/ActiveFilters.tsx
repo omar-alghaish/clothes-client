@@ -33,7 +33,7 @@ const ActiveFilterButton = ({
   );
 };
 
-const ActiveFilters = () => {
+const ActiveFilters = ({ currentDisplay }: { currentDisplay: string }) => {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -75,7 +75,7 @@ const ActiveFilters = () => {
   return (
     <div className="flex flex-col gap-6">
       <div className="flex justify-between items-center">
-        <h1 className="font-extrabold text-foreground/50">Showing 1-12 of 250 results</h1>
+        <h1 className="font-extrabold text-foreground/50">{currentDisplay}</h1>
         <div className="flex items-center gap-2">
           Sort by
           <Select>

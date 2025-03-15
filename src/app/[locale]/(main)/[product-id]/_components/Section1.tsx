@@ -4,7 +4,10 @@ import ProductImagesSwiper from "./ProductImages";
 import img from "../../../../../assets/images/i1.jpg";
 import brandIcon from "../../../../../assets/brandIcons/hm.png";
 import ProductInfo from "./ProductInfo";
-const Section1 = () => {
+import { IProduct } from "./MainContent";
+
+
+const Section1 = ({ _product }: { product: IProduct }) => {
   const [product] = useState({
     brandIcon: brandIcon.src,
     title: "Classic soft cotton shirt",

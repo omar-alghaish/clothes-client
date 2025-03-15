@@ -1,5 +1,5 @@
 import React from 'react'
-import MainContent from './_components/MainContent'
+import MainContent from "./_components/MainContent";
 
 const page = () => {
   return (

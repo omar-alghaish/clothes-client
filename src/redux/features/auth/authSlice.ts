@@ -9,7 +9,7 @@ const initialState = {
 
 // Load state from localStorage if available (for "remember me" functionality)
 if (typeof window !== "undefined") {
-  const savedAuth = localStorage.getItem("auth");
+  const savedAuth = localStorage.getItem("auth") || sessionStorage.getItem("auth");
   if (savedAuth) {
     try {
       const parsedAuth = JSON.parse(savedAuth);
@@ -36,11 +36,16 @@ const authSlice = createSlice({
       // Store in localStorage if "remember me" is checked
       if (remember && typeof window !== "undefined") {
         localStorage.setItem("auth", JSON.stringify({ user, token }));
+      }else{
+        sessionStorage.setItem("auth", JSON.stringify({ user, token }));
       }
     },
     logout: (state) => {
       state.user = null;
       state.token = null;
+      localStorage.removeItem("auth");
+      sessionStorage.removeItem("auth");
+
       state.isAuthenticated = false;
 
       // Clear localStorage on logout

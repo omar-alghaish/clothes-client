@@ -165,6 +165,225 @@
 
 
 
+// "use client";
+
+// import {
+//   Accordion,
+//   AccordionContent,
+//   AccordionItem,
+//   AccordionTrigger,
+// } from "@/components/ui/accordion";
+// import { Button } from "@/components/ui/button";
+// import { Checkbox } from "@/components/ui/checkbox";
+// import { Label } from "@/components/ui/label";
+// import { useSearchParams, useRouter, usePathname } from "next/navigation";
+// import React from "react";
+
+// const Filters = () => {
+//   const searchParams = useSearchParams();
+//   const pathname = usePathname();
+//   const router = useRouter();
+
+//   // Filter options
+//   const colors = ["Red", "Blue", "Green", "Black", "White"];
+//   const sizes = ["S", "M", "L", "XL", "XXL"];
+//   const brands = ["Nike", "Adidas", "Puma", "Under Armour", "Reebok"];
+//   const prices = ["0 - 50", "50 - 100", "100 - 150", "150 - 200", "200+"];
+
+//   // Current filters
+//   const currentFilters = {
+//     category: searchParams.getAll("category"),
+//     color: searchParams.getAll("color"),
+//     size: searchParams.getAll("size"),
+//     brand: searchParams.getAll("brand"),
+//     price: searchParams.getAll("price"),
+//   };
+
+//   const handleFilterChange = (filterType: string, value: string) => {
+//     const params = new URLSearchParams(searchParams);
+//     const values = params.getAll(filterType);
+
+//     if (values.includes(value)) {
+//       params.delete(filterType);
+//       values.filter(v => v !== value).forEach(v => params.append(filterType, v));
+//     } else {
+//       params.append(filterType, value);
+//     }
+
+//     router.replace(`${pathname}?${params.toString()}`);
+//   };
+
+//   // Master category handling
+//   const handleMasterCategory = (gender: "men" | "women") => {
+//     const params = new URLSearchParams(searchParams);
+//     const subCategories = {
+//       men: ["men-Shirts", "men-Pants", "men-Shoes"],
+//       women: ["women-Dresses", "women-Tops", "women-Shoes"]
+//     }[gender];
+
+//     const current = params.getAll("category");
+//     const allSelected = subCategories.every(sc => current.includes(sc));
+
+//     // Remove existing gender categories
+//     const newCategories = current.filter(c => !subCategories.includes(c));
+    
+//     if (!allSelected) {
+//       newCategories.push(...subCategories);
+//     }
+
+//     params.delete("category");
+//     newCategories.forEach(c => params.append("category", c));
+    
+//     router.replace(`${pathname}?${params.toString()}`);
+//   };
+
+//   // Calculate master checkbox states
+//   const menCategories = ["men-Shirts", "men-Pants", "men-Shoes"];
+//   const womenCategories = ["women-Dresses", "women-Tops", "women-Shoes"];
+  
+//   const menSelected = currentFilters.category.filter(c => menCategories.includes(c));
+//   const womenSelected = currentFilters.category.filter(c => womenCategories.includes(c));
+
+//   const menAllSelected = menSelected.length === menCategories.length;
+// //   const menSomeSelected = menSelected.length > 0 && !menAllSelected;
+  
+//   const womenAllSelected = womenSelected.length === womenCategories.length;
+// //   const womenSomeSelected = womenSelected.length > 0 && !womenAllSelected;
+
+//   return (
+//     <div className="w-full border p-4 rounded-lg">
+//       <Accordion type="multiple" className="w-full">
+//         {/* Category Filter */}
+//         <AccordionItem value="category" className="border-none">
+//           <AccordionTrigger>Category</AccordionTrigger>
+//           <AccordionContent>
+//             <Accordion type="multiple" className="pl-4">
+//               {/* Men's Category */}
+//               <AccordionItem value="men" className="border-none">
+//                 <div className="flex items-center gap-2">
+//                   <Checkbox
+//                     checked={menAllSelected}
+//                     // indeterminate={menSomeSelected}
+//                     onCheckedChange={() => handleMasterCategory("men")}
+//                   />
+//                   <AccordionTrigger>Men</AccordionTrigger>
+//                 </div>
+//                 <AccordionContent className="flex flex-col space-y-2 ml-6">
+//                   {["Shirts", "Pants", "Shoes"].map((item) => (
+//                     <div key={item} className="flex items-center space-x-2">
+//                       <Checkbox
+//                         id={`men-${item}`}
+//                         checked={currentFilters.category.includes(`men-${item}`)}
+//                         onCheckedChange={() => handleFilterChange("category", `men-${item}`)}
+//                       />
+//                       <Label htmlFor={`men-${item}`}>{item}</Label>
+//                     </div>
+//                   ))}
+//                 </AccordionContent>
+//               </AccordionItem>
+
+//               {/* Women's Category */}
+//               <AccordionItem value="women" className="border-none">
+//                 <div className="flex items-center gap-2">
+//                   <Checkbox
+//                     checked={womenAllSelected}
+//                     // indeterminate={womenSomeSelected}
+//                     onCheckedChange={() => handleMasterCategory("women")}
+//                   />
+//                   <AccordionTrigger>Women</AccordionTrigger>
+//                 </div>
+//                 <AccordionContent className="flex flex-col space-y-2 ml-6">
+//                   {["Dresses", "Tops", "Shoes"].map((item) => (
+//                     <div key={item} className="flex items-center space-x-2">
+//                       <Checkbox
+//                         id={`women-${item}`}
+//                         checked={currentFilters.category.includes(`women-${item}`)}
+//                         onCheckedChange={() => handleFilterChange("category", `women-${item}`)}
+//                       />
+//                       <Label htmlFor={`women-${item}`}>{item}</Label>
+//                     </div>
+//                   ))}
+//                 </AccordionContent>
+//               </AccordionItem>
+//             </Accordion>
+//           </AccordionContent>
+//         </AccordionItem>
+
+//       {/* Color Filter */}
+//       <AccordionItem value="color" className="border-none" >
+//           <AccordionTrigger>Color</AccordionTrigger>
+//           <AccordionContent className="flex flex-col space-y-2">
+//             {colors.map((color) => (
+//               <div key={color} className="flex items-center space-x-2">
+//                 <Checkbox
+//                   id={color}
+//                   checked={currentFilters.color.includes(color)}
+//                   onCheckedChange={() => handleFilterChange("color", color)}
+//                 />
+//                 <Label htmlFor={color}>{color}</Label>
+//               </div>
+//             ))}
+//           </AccordionContent>
+//         </AccordionItem>
+
+//         {/* Size Filter */}
+//         <AccordionItem value="size" className="border-none">
+//           <AccordionTrigger>Size</AccordionTrigger>
+//           <AccordionContent className="flex flex-wrap gap-2">
+//             {sizes.map((size) => (
+//               <Button
+//                 key={size}
+//                 variant={currentFilters.size.includes(size) ? "default" : "outline"}
+//                 onClick={() => handleFilterChange("size", size)}
+//               >
+//                 {size}
+//               </Button>
+//             ))}
+//           </AccordionContent>
+//         </AccordionItem>
+
+//         {/* Brand Filter */}
+//         <AccordionItem value="brand" className="border-none">
+//           <AccordionTrigger>Brand</AccordionTrigger>
+//           <AccordionContent className="flex flex-col space-y-2">
+//             {brands.map((brand) => (
+//               <div key={brand} className="flex items-center space-x-2">
+//                 <Checkbox
+//                   id={brand}
+//                   checked={currentFilters.brand.includes(brand)}
+//                   onCheckedChange={() => handleFilterChange("brand", brand)}
+//                 />
+//                 <Label htmlFor={brand}>{brand}</Label>
+//               </div>
+//             ))}
+//           </AccordionContent>
+//         </AccordionItem>
+
+//         {/* Price Filter */}
+//         <AccordionItem value="price" className="border-none">
+//           <AccordionTrigger>Price</AccordionTrigger>
+//           <AccordionContent className="flex flex-col space-y-2">
+//             {prices.map((price) => (
+//               <div key={price} className="flex items-center space-x-2">
+//                 <Checkbox
+//                   id={price}
+//                   checked={currentFilters.price.includes(price)}
+//                   onCheckedChange={() => handleFilterChange("price", price)}
+//                 />
+//                 <Label htmlFor={price}>${price}</Label>
+//               </div>
+//             ))}
+//           </AccordionContent>
+//         </AccordionItem>
+//       </Accordion>
+      
+//     </div>
+//   );
+// };
+
+// export default Filters;
+
+
 "use client";
 
 import {
@@ -214,11 +433,11 @@ const Filters = () => {
   };
 
   // Master category handling
-  const handleMasterCategory = (gender: "men" | "women") => {
+  const handleMasterCategory = (gender: "male" | "female") => {
     const params = new URLSearchParams(searchParams);
     const subCategories = {
-      men: ["men-Shirts", "men-Pants", "men-Shoes"],
-      women: ["women-Dresses", "women-Tops", "women-Shoes"]
+      male: ["male-Shirts", "male-Pants", "male-Shoes"],
+      female: ["female-Dresses", "female-Tops", "female-Shoes"]
     }[gender];
 
     const current = params.getAll("category");
@@ -238,17 +457,14 @@ const Filters = () => {
   };
 
   // Calculate master checkbox states
-  const menCategories = ["men-Shirts", "men-Pants", "men-Shoes"];
-  const womenCategories = ["women-Dresses", "women-Tops", "women-Shoes"];
+  const maleCategories = ["male-Shirts", "male-Pants", "male-Shoes"];
+  const femaleCategories = ["female-Dresses", "female-Tops", "female-Shoes"];
   
-  const menSelected = currentFilters.category.filter(c => menCategories.includes(c));
-  const womenSelected = currentFilters.category.filter(c => womenCategories.includes(c));
+  const maleSelected = currentFilters.category.filter(c => maleCategories.includes(c));
+  const femaleSelected = currentFilters.category.filter(c => femaleCategories.includes(c));
 
-  const menAllSelected = menSelected.length === menCategories.length;
-//   const menSomeSelected = menSelected.length > 0 && !menAllSelected;
-  
-  const womenAllSelected = womenSelected.length === womenCategories.length;
-//   const womenSomeSelected = womenSelected.length > 0 && !womenAllSelected;
+  const maleAllSelected = maleSelected.length === maleCategories.length;
+  const femaleAllSelected = femaleSelected.length === femaleCategories.length;
 
   return (
     <div className="w-full border p-4 rounded-lg">
@@ -258,49 +474,47 @@ const Filters = () => {
           <AccordionTrigger>Category</AccordionTrigger>
           <AccordionContent>
             <Accordion type="multiple" className="pl-4">
-              {/* Men's Category */}
-              <AccordionItem value="men" className="border-none">
+              {/* Male Category */}
+              <AccordionItem value="male" className="border-none">
                 <div className="flex items-center gap-2">
                   <Checkbox
-                    checked={menAllSelected}
-                    // indeterminate={menSomeSelected}
-                    onCheckedChange={() => handleMasterCategory("men")}
+                    checked={maleAllSelected}
+                    onCheckedChange={() => handleMasterCategory("male")}
                   />
-                  <AccordionTrigger>Men</AccordionTrigger>
+                  <AccordionTrigger>Male</AccordionTrigger>
                 </div>
                 <AccordionContent className="flex flex-col space-y-2 ml-6">
                   {["Shirts", "Pants", "Shoes"].map((item) => (
                     <div key={item} className="flex items-center space-x-2">
                       <Checkbox
-                        id={`men-${item}`}
-                        checked={currentFilters.category.includes(`men-${item}`)}
-                        onCheckedChange={() => handleFilterChange("category", `men-${item}`)}
+                        id={`male-${item}`}
+                        checked={currentFilters.category.includes(`male-${item}`)}
+                        onCheckedChange={() => handleFilterChange("category", `male-${item}`)}
                       />
-                      <Label htmlFor={`men-${item}`}>{item}</Label>
+                      <Label htmlFor={`male-${item}`}>{item}</Label>
                     </div>
                   ))}
                 </AccordionContent>
               </AccordionItem>
 
-              {/* Women's Category */}
-              <AccordionItem value="women" className="border-none">
+              {/* Female Category */}
+              <AccordionItem value="female" className="border-none">
                 <div className="flex items-center gap-2">
                   <Checkbox
-                    checked={womenAllSelected}
-                    // indeterminate={womenSomeSelected}
-                    onCheckedChange={() => handleMasterCategory("women")}
+                    checked={femaleAllSelected}
+                    onCheckedChange={() => handleMasterCategory("female")}
                   />
-                  <AccordionTrigger>Women</AccordionTrigger>
+                  <AccordionTrigger>Female</AccordionTrigger>
                 </div>
                 <AccordionContent className="flex flex-col space-y-2 ml-6">
                   {["Dresses", "Tops", "Shoes"].map((item) => (
                     <div key={item} className="flex items-center space-x-2">
                       <Checkbox
-                        id={`women-${item}`}
-                        checked={currentFilters.category.includes(`women-${item}`)}
-                        onCheckedChange={() => handleFilterChange("category", `women-${item}`)}
+                        id={`female-${item}`}
+                        checked={currentFilters.category.includes(`female-${item}`)}
+                        onCheckedChange={() => handleFilterChange("category", `female-${item}`)}
                       />
-                      <Label htmlFor={`women-${item}`}>{item}</Label>
+                      <Label htmlFor={`female-${item}`}>{item}</Label>
                     </div>
                   ))}
                 </AccordionContent>
@@ -309,8 +523,9 @@ const Filters = () => {
           </AccordionContent>
         </AccordionItem>
 
-      {/* Color Filter */}
-      <AccordionItem value="color" className="border-none" >
+        {/* Rest of the filters remain unchanged */}
+        {/* Color Filter */}
+        <AccordionItem value="color" className="border-none">
           <AccordionTrigger>Color</AccordionTrigger>
           <AccordionContent className="flex flex-col space-y-2">
             {colors.map((color) => (
@@ -376,7 +591,6 @@ const Filters = () => {
           </AccordionContent>
         </AccordionItem>
       </Accordion>
-      
     </div>
   );
 };

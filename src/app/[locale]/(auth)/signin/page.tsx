@@ -9,14 +9,16 @@ import Link from "next/link";
 import { useLocale } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { FcGoogle } from "react-icons/fc";
 import { FaFacebookF } from "react-icons/fa";
 import { useLoginMutation } from "@/redux/features/auth/authApi";
-import { toast } from "sonner";
+import { toast, Toaster } from "sonner";
 import { useRouter } from "next/navigation";
 import { Checkbox } from "@/components/ui/checkbox";
-import {signIn} from "next-auth/react"
+import { signIn } from "next-auth/react"
+import { useDispatch } from "react-redux";
+import { setCredentials } from "@/redux/features/auth/authSlice";
 const validationSchema = Yup.object().shape({
   email: Yup.string().email("Invalid email").required("Email is required"),
   password: Yup.string().required("Password is required"),
@@ -25,16 +27,41 @@ const validationSchema = Yup.object().shape({
 const Login = () => {
   const locale = useLocale();
   const router = useRouter();
-  const [login, { isSuccess, data, isLoading }] =
+  const dispatch = useDispatch();
+  const [rememberMe, setRememberMe] = useState(false);
+
+  const [login, { isError, isSuccess, data, isLoading, error }] =
     useLoginMutation();
 
   useEffect(() => {
-    if (isSuccess) {
-      const message = data?.message || "Login successful";
+    if (isSuccess && data) {
+      // Store user data in Redux store
+      dispatch(
+        setCredentials({
+          user: data.userWithoutSensitiveData,
+          token: data.token,
+          remember: rememberMe
+        })
+      );
+
+      console.log(data.data.userWithoutSensitiveData, isSuccess);
+
+      const message = data?.message || "login successful";
       toast.success(message);
-      router.push(`/${locale}`); // Redirect to locale-specific homepage
+      router.push(`/${locale}`);
     }
-  }, [isSuccess, data, router, locale]);
+    console.log(data);
+    if (isError) {
+      let errorMessage = "login failed";
+      if (error && 'data' in error) {
+        errorMessage =
+          // error.data?.message ||
+          errorMessage;
+      }
+      toast.error(errorMessage);
+      console.log(error);
+    }
+  }, [isSuccess, data, router, locale, error, isError, dispatch, rememberMe]);
 
   const formik = useFormik({
     initialValues: {
@@ -59,6 +86,7 @@ const Login = () => {
           height={1000}
         />
       </div>
+      <Toaster />
 
       {/* Form Container */}
       <div className="relative z-10 flex items-center justify-center text-center text-white">
@@ -109,8 +137,15 @@ const Login = () => {
           {/* Remember Me and Forgot Password */}
           <div className="flex justify-between items-center mb-4">
             <div className="flex items-center">
-              <Checkbox name="remember" className="bg-gray-500 " />
-              <span className="ml-2 text-gray-400">Remember me</span>
+              <Checkbox
+                id="remember"
+                className="bg-gray-500"
+                checked={rememberMe}
+                onCheckedChange={(checked) => setRememberMe(checked === true)}
+              />
+              <label htmlFor="remember" className="ml-2 text-gray-400 cursor-pointer">
+                Remember me
+              </label>
             </div>
             <div>
               <Link
@@ -143,7 +178,7 @@ const Login = () => {
               type="button"
               variant="ghost"
               className="flex items-center justify-center w-max"
-              onClick={() => signIn("google",{callbackUrl:"/"})}
+              onClick={() => signIn("google", { callbackUrl: "/" })}
             >
               <FcGoogle size={20} />
             </Button>
