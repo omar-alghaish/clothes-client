@@ -4,14 +4,7 @@ import React, { useState } from "react";
 import AdditionalInfoTable from "./AdditionalInfoTable";
 import ReviewList from "./Reviews";
 import img from "../../../../../assets/images/i12.jpg"
-import { IProduct } from "./MainContent";
-const tableData = {
-  Material: "Tricot",
-  Size: ["XS", "S", "M", "L"],
-  Color: ["Red", "Blue", "Yellow", "Black", "Gray"],
-  "Country of origin": "Egypt",
-  Brand: "H&M",
-};
+
 
 const reviews = [
   {
@@ -33,13 +26,27 @@ const reviews = [
   }
 ]
 
-const Section2 = ({ product }: { product: IProduct }) => {
-  const [activeTab, setActiveTab] = useState(0);
+interface Product {
+  material: string;
+  sizes: string[];
+  colors: string[];
+  countryOfOrigin: string;
+  description: string;
+}
 
+const Section2 = ({ product }: { product: Product }) => {
+  const [activeTab, setActiveTab] = useState(0);
+const tableData = {
+  Material: product.material,
+  Size: product.sizes,
+  Color: product.colors,
+  "Country of origin": product.countryOfOrigin,
+  Brand: "H&M",
+};
   const tabs = [
     {
       title: "Description",
-      content: "Product description content goes here...",
+      content: product.description,
     }, {
       title: "Shipping Info",
       content: <AdditionalInfoTable data={tableData} />,

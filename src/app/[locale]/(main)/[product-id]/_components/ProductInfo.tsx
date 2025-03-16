@@ -11,7 +11,7 @@ interface IProductInfo {
     title: string;
     rating: string;
     price: string;
-    details: string;
+    description: string;
     colors: string[];
     sizes: string[];
     images: string[];
@@ -78,8 +78,8 @@ const ProductInfo: FC<IProductInfo> = ({ product }) => {
 
       {/* Product details */}
       <div className="space-y-2">
-        <h3 className="font-bold text-lg">Product Details:</h3>
-        <p className="text-foreground/50 text-lg">{product.details}</p>
+        <h3 className="font-bold text-lg">Product details:</h3>
+        <p className="text-foreground/50 text-lg">{product.description}</p>
       </div>
 
       {/* Color selection */}

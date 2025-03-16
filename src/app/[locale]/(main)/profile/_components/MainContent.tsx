@@ -31,12 +31,14 @@ const MainContent = () => {
   
   const user = useIsUser();
 
+  console.log("User:", user);
+
   const initialValues = {
     firstName: user?.firstName || "",
     lastName: user?.lastName || "",
     phone: user?.phone || "",
     email: user?.email || "",
-    avatar: user?.avatar || "",
+    avatar: user?.avatarFile || "",
     avatarFile: null as File | null,
     gender: user?.gender || "",
   };
@@ -67,7 +69,7 @@ const MainContent = () => {
     if (error) {
       let errorMessage = "Something went wrong";
       if ('data' in error) {
-        // @ts-ignore - handle potential error response structure
+        // @ts-expect-error - handle potential error response structure
         errorMessage = error.data?.message || errorMessage;
       }
       toast.error(errorMessage);

@@ -40,10 +40,10 @@ export const productsApi = createApi({
         getProduct: builder.query({
             query: (id: string) => `/items/${id}`,
         }),
-        getFeaturedProducts: builder.query<any, void>({
+        getFeaturedProducts: builder.query({
             query: () => `/items/featured`,
         }),
-        getNewArrivalsProducts: builder.query<any, void>({
+        getNewArrivalsProducts: builder.query({
             query: () => `/items/new-arrivals`,
         }),
     }),

@@ -1,4 +1,3 @@
-// src/redux/features/auth/authApi.js
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { BASE_URL } from "../api/baseQuery";
 
@@ -8,13 +7,12 @@ export const authApi = createApi({
   baseQuery: fetchBaseQuery({
     baseUrl: BASE_URL,
     prepareHeaders: (headers, { getState }) => {
-      // Get token from state
       const token = (getState() as { auth: { token: string } }).auth.token;
 
-      // If token exists, add authorization header
       if (token) {
         headers.set("authorization", `Bearer ${token}`);
       }
+      console.log(token)
 
       return headers;
     },
@@ -25,11 +23,12 @@ export const authApi = createApi({
         url: "/users/register",
         method: "POST",
         body: {
-          name: userData.name,
+          firstName: userData.firstName,
+          lastName: userData.lastName,
           email: userData.email,
           password: userData.password,
-          passwordConfirm: userData.confirmPassword, // Adjusting field name to match API expectations
-          role: "user", // Default role
+          passwordConfirm: userData.confirmPassword,
+          role: "user",
         },
       }),
     }),
@@ -42,19 +41,33 @@ export const authApi = createApi({
     }),
     updateUser: builder.mutation({
       query: (values) => {
-        console.log("updateUser called with:", values); // Log values here
+        console.log("updateUser called with:", values);
+
+        const formData = new FormData();
+
+        formData.append('firstName', values.firstName);
+        formData.append('lastName', values.lastName);
+        formData.append('email', values.email);
+        formData.append('phone', values.phone);
+        formData.append('gender', values.gender);
+
+
+        if (values.avatarFile instanceof File) {
+          formData.append('avatarFile', values.avatarFile);
+        }
+
         return {
           url: "/users/updateMe",
           method: "PATCH",
-          body: values,
+          body: formData,
+          formData: true,
         };
       },
     }),
-    
-    getMe: builder.query<any, void>({
+    getMe: builder.query({
       query: () => '/users/getMe',
     }),
   }),
 });
 
-export const { useRegisterMutation, useLoginMutation, useGetMeQuery ,useUpdateUserMutation} = authApi;
+export const { useRegisterMutation, useLoginMutation, useGetMeQuery, useUpdateUserMutation } = authApi;

@@ -2,8 +2,6 @@ import { CartItem } from '@/components/common';
 import React, { FC } from 'react';
 import { CartitemProps } from '@/components/common/cartItem/components/MainContent';
 
-const ITEMS_PER_PAGE = 8;
-
 interface IProducts {
   searchParams?: {
     page?: string;
@@ -12,15 +10,12 @@ interface IProducts {
   items?: CartitemProps[];
   totalItems?: number;
   totalPages?: number;
-  error?: any;
+  error?: Error;
   isLoading?: boolean;
 }
 
 
-const Products: FC<IProducts> = ({ searchParams, items }) => {
-  const currentPage = Number(searchParams?.page) || 1;
-
-  console.log(items);
+const Products: FC<IProducts> = ({  items }) => {
 
   return (
     <div className="space-y-6 flex flex-col gap-10">
@@ -30,7 +25,7 @@ const Products: FC<IProducts> = ({ searchParams, items }) => {
             key={index}
             img={item.img}
             name={item.name}
-            brandImage={item.brandImage}
+            brand={item.brand}
             price={item.price}
             rating={item.rating}
             _id={item._id}

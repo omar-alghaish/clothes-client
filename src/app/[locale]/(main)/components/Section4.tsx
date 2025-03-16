@@ -4,16 +4,20 @@ import { CartItem } from "@/components/common";
 import { useGetFeaturedProductsQuery } from "@/redux/features/products/productsApi";
 
 interface ProductItem {
-  image: string;
+  img: string;
   name: string;
-  brandImage: string;
+  brand: {
+    _id: string;
+    brandName: string;
+    brandLogo: string
+  };
   price: string;
   rating: string;
   _id: string;
 }
 
 const Section4 = () => {
-  const { data, isLoading, error } = useGetFeaturedProductsQuery();
+  const { data, isLoading, error } = useGetFeaturedProductsQuery({});
 
   return (
     <section>
@@ -54,9 +58,9 @@ const Section4 = () => {
             {data.data.items.slice(0, 8).map((item: ProductItem, index: number) => (
               <CartItem
                 key={index}
-                img={item.image}
+                img={item.img}
                 name={item.name}
-                brandImage={item.brandImage}
+                brand={item.brand}
                 price={item.price}
                 rating={item.rating}
                 _id={item._id}

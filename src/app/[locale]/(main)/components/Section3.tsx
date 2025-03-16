@@ -4,17 +4,21 @@ import { CartItem } from "@/components/common";
 import { useGetNewArrivalsProductsQuery } from "@/redux/features/products/productsApi";
 
 interface ProductItem {
-  image: string;
+  img: string;
   name: string;
-  brandImage: string;
+  brand: {
+    _id: string;
+    brandName: string;
+    brandLogo: string
+  };
   price: string;
   rating: string;
   _id: string;
 }
 
 const Section3 = () => {
-  const { data, isLoading, error } = useGetNewArrivalsProductsQuery();
-
+  const { data, isLoading, error } = useGetNewArrivalsProductsQuery({});
+console.log(data);
   return (
     <section>
       <div className="container flex flex-col gap-10 py-10 px-4">
@@ -54,9 +58,9 @@ const Section3 = () => {
             {data.data.items.slice(0, 8).map((item: ProductItem, index: number) => (
               <CartItem
                 key={index}
-                img={item.image}
+                img={item.img}
                 name={item.name}
-                brandImage={item.brandImage}
+                brand={item.brand}
                 price={item.price}
                 rating={item.rating}
                 _id={item._id}

@@ -150,18 +150,32 @@ import React, { FC } from "react";
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useAppSelector } from "@/redux/store/hooks";
-import { selectSubtotal, selectTotal, selectTotalItems } from "@/redux/features/cartSlice";
 
 interface IOrderSummary {
   status: "checkout" | "continuePayment" | "confirmPayment";
   onNextStep: () => void;
+  cart: {
+    items: { price: number }[];
+    totalPrice: number;
+  };
+  isLoading: boolean;
 }
 
-const OrderSummary: FC<IOrderSummary> = ({ status, onNextStep }) => {
-  const subtotal = useAppSelector(selectSubtotal);
-  const totalItems = useAppSelector(selectTotalItems);
-  const total = useAppSelector(selectTotal);
+const OrderSummary: FC<IOrderSummary> = ({ 
+  status = "checkout", 
+  onNextStep, 
+  cart, 
+  isLoading = false 
+}) => {
+  // Default values if cart is undefined
+  const items = cart?.items || [];
+  const itemCount = items.length || 0;
+  const subtotal = cart?.totalPrice || 0;
+  
+  // Calculate shipping and tax
+  const shipping = 53.00;
+  const tax = 0.00;
+  const finalTotal = subtotal + shipping + tax;
 
   return (
     <div className="space-y-4">
@@ -170,7 +184,7 @@ const OrderSummary: FC<IOrderSummary> = ({ status, onNextStep }) => {
         <div className="space-y-2">
           <div className="flex justify-between items-center">
             <p className="text-foreground/70 font-bold">Items</p>
-            <p className="font-extrabold">{totalItems}</p>
+            <p className="font-extrabold">{itemCount}</p>
           </div>
           <div className="flex justify-between items-center">
             <p className="text-foreground/70 font-bold">Sub Total</p>
@@ -178,25 +192,28 @@ const OrderSummary: FC<IOrderSummary> = ({ status, onNextStep }) => {
           </div>
           <div className="flex justify-between items-center">
             <p className="text-foreground/70 font-bold">Shipping</p>
-            <p className="font-extrabold">$53.00</p>
+            <p className="font-extrabold">${shipping.toFixed(2)}</p>
           </div>
           <div className="flex justify-between items-center">
             <p className="text-foreground/70 font-bold">Tax</p>
-            <p className="font-extrabold">$0.00</p>
+            <p className="font-extrabold">${tax.toFixed(2)}</p>
           </div>
         </div>
       </div>
       <Separator />
       <div className="flex justify-between items-center">
         <p className="text-foreground/70 font-bold">Total</p>
-        <p className="font-extrabold">${total.toFixed(2)}</p>
+        <p className="font-extrabold">${finalTotal.toFixed(2)}</p>
       </div>
-
       <div className="flex justify-between gap-2">
         <Input placeholder="Coupon code" />
-        <Button variant="outline">Apply</Button>
+        <Button variant="outline" disabled={isLoading}>Apply</Button>
       </div>
-      <Button className="w-full" onClick={onNextStep}>
+      <Button 
+        className="w-full" 
+        onClick={onNextStep} 
+        disabled={isLoading}
+      >
         {status === "checkout" && "Proceed to Checkout"}
         {status === "continuePayment" && "Continue to Payment"}
         {status === "confirmPayment" && "Confirm Payment"}

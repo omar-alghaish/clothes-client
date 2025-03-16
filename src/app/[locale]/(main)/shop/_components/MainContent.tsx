@@ -54,7 +54,7 @@ const MainContent = () => {
     price: priceParams,
     page: currentPage,
   });
-
+console.log(data)
   const totalItems = data?.totalItems || 0;
   const totalPages = data?.totalPages || 1;
 
