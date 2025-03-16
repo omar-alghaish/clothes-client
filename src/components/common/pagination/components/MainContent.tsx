@@ -59,7 +59,7 @@ function Pagination({ totalPages }: { totalPages: number }) {
         </Button>
 
         {/* Page Numbers - Mobile */}
-        <div className="flex md:hidden items-center gap-1">
+        {/* <div className="flex md:hidden items-center gap-1">
           <Button variant="outline" size="sm" className="pointer-events-none">
             {currentPage}
           </Button>
@@ -67,10 +67,10 @@ function Pagination({ totalPages }: { totalPages: number }) {
           <Button variant="outline" size="sm" asChild>
             <Link href={createPageURL(totalPages)}>{totalPages}</Link>
           </Button>
-        </div>
+        </div> */}
 
         {/* Page Numbers - Desktop */}
-        <div className="hidden md:flex items-center gap-1">
+        <div className="flex items-center gap-1">
           {getVisiblePages().map((page, index) => (
             <span key={index} className="flex items-center">
               {page === '...' ? (

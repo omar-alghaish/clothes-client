@@ -6,69 +6,95 @@ import img2 from "../../../../../assets/brandIcons/hm.png"
 // Create array of favorite items data
 const favoriteItems = [
   {
-    id: "1",
+    _id: "1",
     name: "Jacket",
     price: "35",
     rating: "3.5",
     img:img.src,
-    brandIcon:img2.src
-  },
+    brand:{
+      _id: "1",
+      brandName: "H&M",
+      brandLogo: img2.src
+    }  },
   {
-    id: "2",
+    _id: "2",
     name: "Sweater",
     price: "45",
     rating: "4.2",
     img:img.src,
-    brandIcon:img2.src
-  },
+    brand:{
+      _id: "1",
+      brandName: "H&M",
+      brandLogo: img2.src
+    }  },
   {
-    id: "3",
+    _id: "3",
     name: "T-Shirt",
     price: "25",
     rating: "4.0",
     img:img.src,
-    brandIcon:img2.src
-  },
+    brand:{
+      _id: "1",
+      brandName: "H&M",
+      brandLogo: img2.src
+    }  },
   {
-    id: "4",
+    _id: "4",
     name: "Jeans",
     price: "55",
     rating: "4.5",
     img:img.src,
-    brandIcon:img2.src
-  },
+    brand:{
+      _id: "1",
+      brandName: "H&M",
+      brandLogo: img2.src
+    }  },
   {
-    id: "1",
+    _id: "1",
     name: "Jacket",
     price: "35",
     rating: "3.5",
     img:img.src,
-    brandIcon:img2.src
-  },
+    brand:{
+      _id: "1",
+      brandName: "H&M",
+      brandLogo: img2.src
+    }  },
   {
-    id: "2",
+    _id: "2",
     name: "Sweater",
     price: "45",
     rating: "4.2",
     img:img.src,
-    brandIcon:img2.src
+    brand:{
+      _id: "1",
+      brandName: "H&M",
+      brandLogo: img2.src
+    }
   },
   {
-    id: "3",
+    _id: "3",
     name: "T-Shirt",
     price: "25",
     rating: "4.0",
     img:img.src,
-    brandIcon:img2.src
+    brand:{
+      _id: "1",
+      brandName: "H&M",
+      brandLogo: img2.src
+    }
   },
   {
-    id: "4",
+    _id: "4",
     name: "Jeans",
     price: "55",
     rating: "4.5",
     img:img.src,
-    brandIcon:img2.src
-  }
+    brand:{
+      _id: "1",
+      brandName: "H&M",
+      brandLogo: img2.src
+    }  }
 ];
 
 const FavoritesList = () => {
@@ -78,13 +104,13 @@ const FavoritesList = () => {
         <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-4">
           {favoriteItems.map((item) => (
             <CartItem
-              key={item.id} // Better to use item.id instead of index if available
+              key={item._id} // Better to use item.id instead of index if available
               img={item.img}
               name={item.name}
-              brandImage={item.brandIcon}
+              brand={item?.brand}
               price={item.price}
               rating={item.rating}
-              id={item.id}
+              _id={item?._id}
             />
           ))}
         </div>

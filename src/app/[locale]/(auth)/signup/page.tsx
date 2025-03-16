@@ -254,7 +254,8 @@ import { Toaster } from "@/components/ui/sonner";
 import { Checkbox } from "@/components/ui/checkbox";
 
 const validationSchema = Yup.object().shape({
-  name: Yup.string().required("Name is required"),
+  firstName: Yup.string().required("First name is required"),
+  lastName: Yup.string().required("Last name is required"),
   email: Yup.string().email("Invalid email").required("Email is required"),
   password: Yup.string()
     .min(6, "Password must be at least 6 characters")
@@ -303,7 +304,8 @@ const Signup = () => {
 
   const formik = useFormik({
     initialValues: {
-      name: "",
+      firstName: "",
+      lastName: "",
       email: "",
       password: "",
       confirmPassword: "",
@@ -342,19 +344,35 @@ const Signup = () => {
             </p>
           </div>
 
-          {/* Name Input */}
+          {/* First Name Input */}
           <div className="mb-4 text-start">
             <Input
-              name="name"
-              placeholder="Name"
+              name="firstName"
+              placeholder="First Name"
               icon={<User />}
-              value={formik.values.name}
+              value={formik.values.firstName}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
               className="bg-transparent border-border/50"
             />
-            {formik.touched.name && formik.errors.name && (
-              <div className="text-red-500 text-sm">{formik.errors.name}</div>
+            {formik.touched.firstName && formik.errors.firstName && (
+              <div className="text-red-500 text-sm">{formik.errors.firstName}</div>
+            )}
+          </div>
+
+          {/* Last Name Input */}
+          <div className="mb-4 text-start">
+            <Input
+              name="lastName"
+              placeholder="Last Name"
+              icon={<User />}
+              value={formik.values.lastName}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              className="bg-transparent border-border/50"
+            />
+            {formik.touched.lastName && formik.errors.lastName && (
+              <div className="text-red-500 text-sm">{formik.errors.lastName}</div>
             )}
           </div>
 

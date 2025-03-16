@@ -9,12 +9,11 @@ import ThemeToggle from "../../toggleTheme";
 import SearchInput from "./SearchInput";
 import { Bell, Heart, ShoppingBasket, UserRound } from "lucide-react";
 import Link from "next/link";
-import { useSelector } from "react-redux";
-import { RootState } from "@/redux/store";
+import { useIsUser } from "@/hooks/useIsUser";
 
 export const MainHeader = () => {
   const locale = useLocale();
-  const { user } = useSelector((state: RootState) => state.auth);
+  const isUser = useIsUser();
 
   return (
     <div className="hidden md:flex justify-between items-center p-3 lg:p-4 w-full">
@@ -24,7 +23,7 @@ export const MainHeader = () => {
         <ThemeToggle />
         <ChangeLang />
         <SearchInput />
-        {user ? (
+        {isUser ? (
           <div className="flex  gap-4 items-center ">
             <Link href={`/${locale}/cart`}>
               <ShoppingBasket className="text-primary/80" size={20} />

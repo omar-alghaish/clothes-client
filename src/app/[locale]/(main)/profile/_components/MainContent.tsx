@@ -1,10 +1,13 @@
 "use client";
-import React from "react";
+import React, { useEffect } from "react";
 import EditImage from "./EditImage";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import InputsContainer from "./InputsContainer";
 import { Button } from "@/components/ui/button";
+import { useIsUser } from "@/hooks/useIsUser";
+import { useUpdateUserMutation } from "@/redux/features/auth/authApi";
+import { toast, Toaster } from "sonner";
 
 const validationSchema = Yup.object().shape({
   firstName: Yup.string().required("First name is required"),
@@ -13,71 +16,81 @@ const validationSchema = Yup.object().shape({
     .matches(/^[+]?[(]?[0-9]{1,4}[)]?[-\s./0-9]*$/, "Invalid phone number")
     .required("Phone is required"),
   email: Yup.string().email("Invalid email").required("Email is required"),
-  avatarFile: Yup.mixed()
-    .test("fileSize", "File too large", (value) => 
-      !value || (value instanceof File && value.size <= 1024 * 1024) // 1MB
-    )
-    .test("fileType", "Unsupported file format", (value) => 
-      !value || (value instanceof File && ["image/jpeg", "image/png"].includes(value.type))
-    ),
+  // avatarFile: Yup.mixed()
+  //   // .test("fileSize", "File too large", (value) =>
+  //   //   !value || (value instanceof File && value.size <= 1024 * 1024) // 1MB
+  //   // )
+  //   .test("fileType", "Unsupported file format", (value) =>
+  //     !value || (value instanceof File && ["image/jpeg", "image/png"].includes(value.type))
+  //   ),
   gender: Yup.string().required("Gender is required"),
 });
 
 const MainContent = () => {
+  const [updateUser, { isLoading, isSuccess, error }] = useUpdateUserMutation();
+  
+  const user = useIsUser();
+
+  console.log("User:", user);
+
   const initialValues = {
-    firstName: "",
-    lastName: "",
-    phone: "",
-    email: "",
-    avatar: "",
+    firstName: user?.firstName || "",
+    lastName: user?.lastName || "",
+    phone: user?.phone || "",
+    email: user?.email || "",
+    avatar: user?.avatarFile || "",
     avatarFile: null as File | null,
-    gender: "",
-  };
-
-  const handleSubmit = async (values: typeof initialValues) => {
-    const formData = new FormData();
-    
-    if (values.avatarFile) {
-      formData.append("avatar", values.avatarFile);
-    }
-    
-    formData.append("firstName", values.firstName);
-    formData.append("lastName", values.lastName);
-    formData.append("email", values.email);
-    formData.append("phone", values.phone);
-    formData.append("gender", values.gender);
-
-    try {
-      const response = await fetch("/api/submit", {
-        method: "POST",
-        body: formData,
-      });
-
-      if (!response.ok) throw new Error("Submission failed");
-      
-      const result = await response.json();
-      console.log("Success:", result);
-      // Handle success (e.g., show toast, redirect)
-    } catch (error) {
-      console.error("Error:", error);
-      // Handle error (e.g., show error message)
-    }
+    gender: user?.gender || "",
   };
 
   const form = useFormik({
     initialValues,
     validationSchema,
-    onSubmit: handleSubmit,
+    enableReinitialize: true,
+    onSubmit: async (values) => {
+
+      try {
+        const response = await updateUser(values).unwrap();
+        console.log("Server Response:", response);
+      } catch (err) {
+        console.error("Error in form submission:", err);
+      }
+    },
   });
+
+  console.log("Formik errors:", form.errors);
+
+  // Handle API response
+  useEffect(() => {
+    if (isSuccess) {
+      toast.success("Profile updated successfully");
+    }
+    
+    if (error) {
+      let errorMessage = "Something went wrong";
+      if ('data' in error) {
+        // @ts-expect-error - handle potential error response structure
+        errorMessage = error.data?.message || errorMessage;
+      }
+      toast.error(errorMessage);
+    }
+  }, [isSuccess, error]);
 
   return (
     <form onSubmit={form.handleSubmit} className="space-y-8">
-     <h1 className="font-extrabold text-3xl">Edit Profile</h1> 
+      <h1 className="font-extrabold text-3xl">Edit Profile</h1>
       <EditImage formik={form} />
       <InputsContainer formik={form} />
       <div className="flex justify-end">
-        <Button type="submit">Submit</Button>
+        <Button 
+          type="submit" 
+          disabled={isLoading}
+          // onClick={() => console.log("Button clicked")}
+        >
+          {isLoading ? "Updating..." : "Submit"}
+        </Button>
       </div>
+      <Toaster />
     </form>
   );
 };
