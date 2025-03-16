@@ -1,78 +1,7 @@
-// "use client";
-// import React from "react";
-// import Payment from "./payment";
-// import AddCard from "./AddCard";
-
-// type PaymentType = "google-pay" | "mastercard" | "visa" | "paypal";
-
-// const payments: { cardnumber: string; type: PaymentType }[] = [
-//   {
-//     cardnumber: "35*********323",
-//     type: "visa",
-//   },
-//   {
-//     cardnumber: "35*********323",
-//     type: "mastercard",
-//   },
-// ];
-
-// const PaymentMethod = () => {
-//   return (
-//     <div className="space-y-6">
-//       <div className="space-y-4"> 
-
-//         {payments.map((item, index) => (
-//           <Payment key={index} type={item.type} cardNumber={item.cardnumber} />
-//         ))}
-//       </div>
-//       <AddCard />
-//     </div>
-//   );
-// };
-
-// export default PaymentMethod;
-
-
-// "use client";
-// import React from "react";
-// import Payment from "./payment";
-// import AddCard from "./AddCard"
-
-// type PaymentType = "google-pay" | "mastercard" | "visa" | "paypal";
-
-// const payments: { cardnumber: string; type: PaymentType }[] = [
-//   {
-//     cardnumber: "35*********323",
-//     type: "visa",
-//   },
-//   {
-//     cardnumber: "35*********323",
-//     type: "mastercard",
-//   },
-// ];
-
-// const PaymentMethod = () => {
-//   return (
-//     <div className="space-y-6">
-//       <div className="space-y-4"> 
-//         {payments.map((item, index) => (
-//           <Payment key={index} type={item.type} cardNumber={item.cardnumber} />
-//         ))}
-//       </div>
-//       <AddCard />
-//     </div>
-//   );
-// };
-
-// export default PaymentMethod;
-
-
-
 "use client";
 import React, { useState } from "react";
 import Payment from "./payment";
 import AddCard from "./AddCard";
-import { Button } from "@/components/ui/button";
 import { useAppSelector, useAppDispatch } from "@/redux/store/hooks";
 import { addPaymentMethod, selectPaymentMethods } from "@/redux/features/cartSlice";
 
@@ -91,6 +20,16 @@ const PaymentMethod = () => {
   const [selectedPayment, setSelectedPayment] = useState<string>("");
   const [showAddCard, setShowAddCard] = useState(false);
 
+  const handlePaymentSelection = (paymentId: string) => {
+    setSelectedPayment(paymentId);
+    setShowAddCard(false); // Close add card form when selecting existing payment
+  };
+
+  const handleAddNewPaymentSelection = () => {
+    setSelectedPayment(""); // Clear selected payment
+    setShowAddCard(true);
+  };
+
   const handleAddCard = (values: CardValues) => {
     const maskedCard = values.cardNumber.replace(/.(?=.{4})/g, '*');
     const newPayment = {
@@ -103,7 +42,6 @@ const PaymentMethod = () => {
       },
       cardNumber: maskedCard
     };
-    
     dispatch(addPaymentMethod(newPayment));
     setSelectedPayment(newPayment.id);
     setShowAddCard(false);
@@ -113,7 +51,7 @@ const PaymentMethod = () => {
     <div className="space-y-6">
       <div className="space-y-4">
         {paymentMethods.map((payment) => (
-          <div 
+          <div
             key={payment.id}
             className={`border rounded-lg p-4 ${selectedPayment === payment.id ? 'border-primary' : ''}`}
           >
@@ -123,21 +61,20 @@ const PaymentMethod = () => {
                 name="paymentMethod"
                 value={payment.id}
                 checked={selectedPayment === payment.id}
-                onChange={(e) => setSelectedPayment(e.target.value)}
+                onChange={() => handlePaymentSelection(payment.id)}
                 className="h-5 w-5 text-primary focus:ring-primary"
                 aria-labelledby={`label-${payment.id}`}
               />
               <span id={`label-${payment.id}`} className="sr-only">
                 {`Select ${payment.type} ending in ${payment.cardNumber ? payment.cardNumber.slice(-4) : ''}`}
               </span>
-              <Payment 
-                type={payment.type} 
-                cardNumber={payment.cardNumber || ''} 
+              <Payment
+                type={payment.type}
+                cardNumber={payment.cardNumber || ''}
               />
             </label>
           </div>
         ))}
-
         <div className={`border rounded-lg p-4 ${showAddCard ? 'border-primary' : ''}`}>
           <label className="flex items-center gap-4 cursor-pointer">
             <input
@@ -145,7 +82,7 @@ const PaymentMethod = () => {
               name="paymentMethod"
               value="new"
               checked={showAddCard}
-              onChange={(e) => setShowAddCard(e.target.checked)}
+              onChange={() => handleAddNewPaymentSelection()}
               className="h-5 w-5 text-primary focus:ring-primary"
               aria-labelledby="label-new-payment"
             />
@@ -155,20 +92,18 @@ const PaymentMethod = () => {
             </div>
           </label>
         </div>
-
         {showAddCard && (
           <div className="mt-4">
             <AddCard onSubmit={handleAddCard} />
           </div>
         )}
       </div>
-
-      <Button 
+      {/* <Button
         className="w-full"
         disabled={!selectedPayment && !showAddCard}
       >
         Continue to Review
-      </Button>
+      </Button> */}
     </div>
   );
 };
