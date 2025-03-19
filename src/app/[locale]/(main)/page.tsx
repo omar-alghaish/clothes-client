@@ -6,6 +6,7 @@ import Section3 from "./components/Section3";
 import Section4 from "./components/Section4";
 import Section5 from "./components/Section5";
 import Section6 from "./components/Section6";
+import CavemanNotFound from "@/components/test";
 
 type MessagesType = {
   NavbarLinks: {
@@ -30,6 +31,7 @@ export default function Home() {
   // const t = useTranslations("HomePage");
   return (
     <div className="">
+    {/* <CavemanNotFound /> */}
       <Section1 />
       <Section2 />
       <Section3 />

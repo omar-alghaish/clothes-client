@@ -2,27 +2,21 @@
 import React, { useState } from "react";
 import Payment from "./payment";
 import AddCard from "./AddCard";
-import { useAppSelector, useAppDispatch } from "@/redux/store/hooks";
-import { addPaymentMethod, selectPaymentMethods } from "@/redux/features/cartSlice";
+import { useAppDispatch } from "@/redux/store/hooks";
+import { IPaymentCard, useGetPaymentCardsQuery } from "@/redux/features/user/userApi";
 
 type PaymentType = "credit-card" | "google-pay" | "mastercard" | "visa" | "paypal";
-
-interface CardValues {
-  cardNumber: string;
-  holderName: string;
-  expireDate: string;
-  cvv: string;
-}
+type ExtendedPaymentCard = IPaymentCard & { type: PaymentType };
 
 const PaymentMethod = () => {
   const dispatch = useAppDispatch();
-  const paymentMethods = useAppSelector(selectPaymentMethods);
   const [selectedPayment, setSelectedPayment] = useState<string>("");
   const [showAddCard, setShowAddCard] = useState(false);
+  const { data: paymentMethods, isLoading, error } = useGetPaymentCardsQuery({});
 
   const handlePaymentSelection = (paymentId: string) => {
     setSelectedPayment(paymentId);
-    setShowAddCard(false); // Close add card form when selecting existing payment
+    setShowAddCard(false); 
   };
 
   const handleAddNewPaymentSelection = () => {
@@ -30,19 +24,18 @@ const PaymentMethod = () => {
     setShowAddCard(true);
   };
 
-  const handleAddCard = (values: CardValues) => {
+  const handleAddCard = (values: Omit<IPaymentCard, "_id">) => {
     const maskedCard = values.cardNumber.replace(/.(?=.{4})/g, '*');
     const newPayment = {
       id: `card-${Date.now()}`,
       type: 'credit-card' as PaymentType,
       details: {
-        holderName: values.holderName,
-        expireDate: values.expireDate,
+        holderName: values.cardHolderName,
+        expirationDate: values.expirationDate,
         cvv: values.cvv
       },
       cardNumber: maskedCard
     };
-    dispatch(addPaymentMethod(newPayment));
     setSelectedPayment(newPayment.id);
     setShowAddCard(false);
   };
@@ -50,22 +43,22 @@ const PaymentMethod = () => {
   return (
     <div className="space-y-6">
       <div className="space-y-4">
-        {paymentMethods.map((payment) => (
+        {paymentMethods?.map((payment: ExtendedPaymentCard) => (
           <div
-            key={payment.id}
-            className={`border rounded-lg p-4 ${selectedPayment === payment.id ? 'border-primary' : ''}`}
+            key={payment._id}
+            className={`border rounded-lg p-4 ${selectedPayment === payment._id ? 'border-primary' : ''}`}
           >
             <label className="flex items-center gap-4 cursor-pointer">
               <input
                 type="radio"
                 name="paymentMethod"
-                value={payment.id}
-                checked={selectedPayment === payment.id}
-                onChange={() => handlePaymentSelection(payment.id)}
+                value={payment._id}
+                checked={selectedPayment === payment._id}
+                onChange={() => handlePaymentSelection(payment._id)}
                 className="h-5 w-5 text-primary focus:ring-primary"
-                aria-labelledby={`label-${payment.id}`}
+                aria-labelledby={`label-${payment._id}`}
               />
-              <span id={`label-${payment.id}`} className="sr-only">
+              <span id={`label-${payment._id}`} className="sr-only">
                 {`Select ${payment.type} ending in ${payment.cardNumber ? payment.cardNumber.slice(-4) : ''}`}
               </span>
               <Payment
@@ -75,6 +68,7 @@ const PaymentMethod = () => {
             </label>
           </div>
         ))}
+
         <div className={`border rounded-lg p-4 ${showAddCard ? 'border-primary' : ''}`}>
           <label className="flex items-center gap-4 cursor-pointer">
             <input
@@ -98,12 +92,6 @@ const PaymentMethod = () => {
           </div>
         )}
       </div>
-      {/* <Button
-        className="w-full"
-        disabled={!selectedPayment && !showAddCard}
-      >
-        Continue to Review
-      </Button> */}
     </div>
   );
 };

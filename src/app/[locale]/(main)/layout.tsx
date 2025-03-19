@@ -1,6 +1,7 @@
 import { Footer, Header } from "@/components/common";
 import BootIcon from "@/components/common/bootIcon";
 import { ReactNode } from "react";
+import { Toaster } from "sonner";
 
 export default async function RootLayout({
   children,
@@ -13,6 +14,7 @@ export default async function RootLayout({
       <div>{children}</div>
       <BootIcon />
       <Footer />
+      {/* <Toaster /> */}
     </div>
   );
 }
