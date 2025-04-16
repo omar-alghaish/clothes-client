@@ -6,7 +6,6 @@ import Section3 from "./components/Section3";
 import Section4 from "./components/Section4";
 import Section5 from "./components/Section5";
 import Section6 from "./components/Section6";
-import CavemanNotFound from "@/components/test";
 
 type MessagesType = {
   NavbarLinks: {

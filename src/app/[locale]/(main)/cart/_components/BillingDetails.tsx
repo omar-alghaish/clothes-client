@@ -175,53 +175,50 @@
 
 "use client";
 import React, { useState, useEffect } from "react";
-import { Button } from "@/components/ui/button";
 import AddressForm from "./AddressForm";
 import SavedAddressCard from "./AddressCard";
-import { IAddress, useCreateAddressMutation, useDeleteAddressMutation, useGetAddressesQuery } from "@/redux/features/user/userApi";
-import { toast } from "sonner";
-import { selectAddressId, setAddressId } from "@/redux/features/orderSlice";
+import { IAddress, useGetAddressesQuery } from "@/redux/features/user/userApi";
+import {setAddressId } from "@/redux/features/orderSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
 
 const BillingDetails = () => {
-  const { data: addresses , isLoading, error } = useGetAddressesQuery({});
+  const { data: addresses , isLoading } = useGetAddressesQuery({});
   const { order } = useSelector((state: RootState) => state);
   console.log(order)
   const [selectedAddress, setSelectedAddress] = useState("");
   const [showAddAddress, setShowAddAddress] = useState(false);
-  const [billingAddress, setBillingAddress] = useState(null);
   const dispatch = useDispatch();
 
   console.log(addresses)
 
 
-const fakeAddresses = [
-  {
-    _id: "address-1",
-    firstName: "John",
-    lastName: "Doe",
-    phoneNumber: "+1 234 567 8901",
-    email: "john.doe@example.com",
-    country: "US",
-    city: "New York",
-    state: "NY",
-    streetAddress: "123 Broadway St",
-    zipCode: "10001"
-  },
-  {
-    _id: "address-2",
-    firstName: "Jane",
-    lastName: "Smith",
-    phoneNumber: "+1 987 654 3210",
-    email: "jane.smith@example.com",
-    country: "US",
-    city: "Los Angeles",
-    state: "CA",
-    streetAddress: "456 Hollywood Blvd",
-    zipCode: "90028"
-  }
-];
+// const fakeAddresses = [
+//   {
+//     _id: "address-1",
+//     firstName: "John",
+//     lastName: "Doe",
+//     phoneNumber: "+1 234 567 8901",
+//     email: "john.doe@example.com",
+//     country: "US",
+//     city: "New York",
+//     state: "NY",
+//     streetAddress: "123 Broadway St",
+//     zipCode: "10001"
+//   },
+//   {
+//     _id: "address-2",
+//     firstName: "Jane",
+//     lastName: "Smith",
+//     phoneNumber: "+1 987 654 3210",
+//     email: "jane.smith@example.com",
+//     country: "US",
+//     city: "Los Angeles",
+//     state: "CA",
+//     streetAddress: "456 Hollywood Blvd",
+//     zipCode: "90028"
+//   }
+// ];
 
 
   useEffect(() => {
@@ -242,15 +239,15 @@ const fakeAddresses = [
     setShowAddAddress(true);
   };
 
-  const handleContinue = () => {
-    if (selectedAddress) {
-      const address = addresses?.find((addr: { _id: string }) => addr._id === selectedAddress);
-      if (address) {
-        setBillingAddress(address);
-        toast.success(`Selected billing address: ${address.firstName} ${address.lastName}`);
-      }
-    }
-  };
+  // const handleContinue = () => {
+  //   if (selectedAddress) {
+  //     const address = addresses?.find((addr: { _id: string }) => addr._id === selectedAddress);
+  //     if (address) {
+  //       setBillingAddress(address);
+  //       toast.success(`Selected billing address: ${address.firstName} ${address.lastName}`);
+  //     }
+  //   }
+  // };
 
   const handleAddNewAddress = (id?: string) => {
     if (id) {
@@ -323,7 +320,7 @@ const fakeAddresses = [
           </div>
         )}
 
-        {!showAddAddress && addresses?.data?.addresses?.length > 0 && (
+        {/* {!showAddAddress && addresses?.data?.addresses?.length > 0 && (
           <Button
             className="w-full"
             onClick={handleContinue}
@@ -331,7 +328,7 @@ const fakeAddresses = [
           >
             Continue
           </Button>
-        )}
+        )} */}
       </div>
     </div>
   );

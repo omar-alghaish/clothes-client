@@ -22,11 +22,11 @@ export interface CartitemProps {
   rating: string;
 }
 
-const MainContent: FC<CartitemProps> = ({ img, name, brand, price, rating, _id }) => {
+const MainContent: FC<CartitemProps> = ({ img, name,  price, rating, _id }) => {
   const locale = useLocale();
   const checkAuth = useAuthRedirect();
   const [imgLoading, setImgLoading] = useState(true);
-  const [brandImgLoading, setBrandImgLoading] = useState(true);
+  const [brandImgLoading] = useState(true);
   const imgRef = useRef<HTMLImageElement>(null);
 
   const [addToCart] = useAddToCartMutation(); useEffect(() => {
@@ -91,7 +91,7 @@ const MainContent: FC<CartitemProps> = ({ img, name, brand, price, rating, _id }
           {brandImgLoading && (
             <div className="w-full h-full bg-gray-300 animate-pulse rounded-full"></div>
           )}
-          {brand?.brandLogo && (
+          {/* {brand?.brandLogo && (
             <Image
               src={brand.brandLogo}
               alt={`${name} brand logo`}
@@ -101,7 +101,7 @@ const MainContent: FC<CartitemProps> = ({ img, name, brand, price, rating, _id }
               onLoad={() => setBrandImgLoading(false)}
               onError={() => setBrandImgLoading(false)}
             />
-          )}
+          )} */}
         </div>
         <Heart
           onClick={() => handleLove(_id)}

@@ -82,7 +82,7 @@ const orderSlice = createSlice({
       state.paymentMethod = undefined;
     },
     
-    clearOrder: (state) => {
+    clearOrder: () => {
       return initialState;
     }
   }

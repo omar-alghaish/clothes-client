@@ -23,13 +23,19 @@ export interface IPaymentCard {
     cvv: string;
 }
 
+interface RootState {
+    auth: {
+        token: string;
+    };
+}
+
 export const userApi = createApi({
     reducerPath: 'api',
     baseQuery: fetchBaseQuery({
         baseUrl: BASE_URL,
         prepareHeaders: (headers, { getState }) => {
             // Get the token from your state
-            const token = (getState() as any).auth.token;
+            const token = (getState() as RootState).auth.token;
             // If we have a token, add it to the headers
             if (token) {
                 headers.set('Authorization', `Bearer ${token}`);
@@ -48,7 +54,7 @@ export const userApi = createApi({
             query: (id) => `/addresses/${id}`,
             providesTags: ['Address'],
         }),
-        createAddress: builder.mutation<any, Omit<IAddress, "_id"> >({
+        createAddress: builder.mutation<IAddress, Omit<IAddress, "_id">>({
             query: (address) => ({
                 url: '/addresses',
                 method: 'POST',
@@ -56,7 +62,7 @@ export const userApi = createApi({
             }),
             invalidatesTags: ['Address'],
         }),
-        updateAddress: builder.mutation<any, { id: string; address: Omit<IAddress, "_id"> }>({
+        updateAddress: builder.mutation<IAddress, { id: string; address: Omit<IAddress, "_id"> }>({
             query: ({ id, address }) => ({
                 url: `/addresses/${id}`,
                 method: 'PUT',
@@ -81,7 +87,7 @@ export const userApi = createApi({
             query: (id) => `/payment-cards/${id}`,
             providesTags: ['PaymentCard'],
         }),
-        createPaymentCard: builder.mutation<any, Omit<IPaymentCard, "_id">>({
+        createPaymentCard: builder.mutation<IPaymentCard, Omit<IPaymentCard, "_id">>({
             query: (paymentCard) => ({
                 url: '/payment-cards',
                 method: 'POST',
@@ -89,7 +95,7 @@ export const userApi = createApi({
             }),
             invalidatesTags: ['PaymentCard'],
         }),
-        updatePaymentCard: builder.mutation<any, { id: string; paymentCard: Omit<IPaymentCard, "_id"> }>({
+        updatePaymentCard: builder.mutation<IPaymentCard, { id: string; paymentCard: Omit<IPaymentCard, "_id"> }>({
             query: ({ id, paymentCard }) => ({
                 url: `/payment-cards/${id}`,
                 method: 'PUT',

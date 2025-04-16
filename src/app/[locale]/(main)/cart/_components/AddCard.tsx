@@ -1,3 +1,4 @@
+
 "use client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -8,7 +9,10 @@ import { CreditCard } from "lucide-react";
 import React from "react";
 import { toast } from "sonner";
 import * as Yup from "yup";
+import Payment from "./payment";
+import { useAddPaymentCardMutation } from "@/redux/features/cart/cartApi";
 
+// AddCard Component
 const validationSchema = Yup.object().shape({
   cardHolderName: Yup.string().required("Card holder name is required"),
   cardNumber: Yup.string()
@@ -22,7 +26,9 @@ const validationSchema = Yup.object().shape({
     .matches(/^\d{3,4}$/, "CVV must be 3 or 4 digits"),
 });
 
-const AddCard = ({ onSubmit }: { onSubmit: (values: Omit<IPaymentCard, "_id">) => void }) => {
+const AddCard = ({ onSuccess }: { onSuccess: (newCardId: string) => void }) => {
+  const [addPaymentCard] = useAddPaymentCardMutation();
+
   const formik = useFormik<Omit<IPaymentCard, "_id">>({
     initialValues: {
       cardHolderName: "",
@@ -31,9 +37,22 @@ const AddCard = ({ onSubmit }: { onSubmit: (values: Omit<IPaymentCard, "_id">) =
       cvv: "",
     },
     validationSchema,
-    onSubmit: (values) => {
-      onSubmit(values);
-      formik.resetForm();
+    onSubmit: async (values, { resetForm, setSubmitting }) => {
+      try {
+        const processedValues = {
+          ...values,
+          cardNumber: values.cardNumber.replace(/ /g, ''),
+        };
+        const result = await addPaymentCard(processedValues).unwrap();
+        toast.success("Payment card added successfully");
+        resetForm();
+        onSuccess(result._id);
+      } catch (error) {
+        console.log("Failed to add payment card:", error);
+        toast.error("Failed to add payment card");
+      } finally {
+        setSubmitting(false);
+      }
     },
   });
 
@@ -90,6 +109,11 @@ const AddCard = ({ onSubmit }: { onSubmit: (values: Omit<IPaymentCard, "_id">) =
           {formik.touched.cardNumber && formik.errors.cardNumber && (
             <p className="text-red-500 text-sm">{formik.errors.cardNumber}</p>
           )}
+          {formik.values.cardNumber && (
+            <div className="mt-2">
+              <Payment cardNumber={formik.values.cardNumber} />
+            </div>
+          )}
         </div>
 
         <div className="grid grid-cols-2 gap-4">
@@ -135,7 +159,7 @@ const AddCard = ({ onSubmit }: { onSubmit: (values: Omit<IPaymentCard, "_id">) =
           className="w-full"
           disabled={!formik.isValid || formik.isSubmitting}
         >
-          Add Payment Method
+          {formik.isSubmitting ? "Adding..." : "Add Payment Method"}
         </Button>
       </form>
     </div>

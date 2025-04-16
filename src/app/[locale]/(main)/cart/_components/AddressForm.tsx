@@ -77,12 +77,14 @@ const AddressForm: React.FC<AddressFormProps> = ({ onSuccess, initialValues }) =
             id: initialValues.id, 
             address: values 
           }).unwrap();
+
+          console.log(result)
           
           toast.success("Address updated successfully!");
           if (onSuccess) onSuccess(initialValues.id);
         } else {
           const result = await createAddress(values).unwrap();
-          const addressId = result?.data?.address?._id;
+          const addressId = result?._id;
           
           toast.success("Address saved successfully!");
           if (onSuccess) onSuccess(addressId);
@@ -130,7 +132,7 @@ const AddressForm: React.FC<AddressFormProps> = ({ onSuccess, initialValues }) =
       const data = await response.json();
       
       if (data.data && Array.isArray(data.data)) {
-        const formattedCountries = data.data.map((country: any) => ({
+        const formattedCountries = data.data.map((country: { country: string; iso2?: string }) => ({
           value: country.iso2 || country.country,
           label: country.country
         }));
@@ -168,7 +170,7 @@ const AddressForm: React.FC<AddressFormProps> = ({ onSuccess, initialValues }) =
       const data = await response.json();
       
       if (data.data && data.data.states && Array.isArray(data.data.states)) {
-        const formattedStates = data.data.states.map((state: any) => ({
+        const formattedStates = data.data.states.map((state: { state_code?: string; name: string }) => ({
           value: state.state_code || state.name,
           label: state.name
         }));
@@ -392,7 +394,6 @@ interface FormSelectProps {
 
 const FormSelect: React.FC<FormSelectProps> = ({ 
   label, 
-  name, 
   placeholder, 
   value, 
   onChange, 
