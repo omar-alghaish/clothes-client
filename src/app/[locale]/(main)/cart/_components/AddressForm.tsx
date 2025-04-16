@@ -100,7 +100,6 @@ const AddressForm: React.FC<AddressFormProps> = ({ onSuccess, initialValues }) =
     fetchCountries();
   }, []);
 
-  // Fetch states when country changes
   useEffect(() => {
     if (formik.values.country) {
       fetchStates(formik.values.country);
