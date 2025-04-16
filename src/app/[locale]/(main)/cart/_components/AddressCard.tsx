@@ -1,24 +1,28 @@
+import { IAddress } from "@/redux/features/user/userApi";
 import React from "react";
 
-interface Address {
-  firstName: string;
-  lastName: string;
-  streetAddress: string;
-  city: string;
-  state: string;
-  zipCode: string;
-  country: string;
+
+interface SavedAddressCardProps {
+  address: IAddress;
 }
 
-const SavedAddressCard: React.FC<{ address: Address }> = ({ address }) => {
-  const { firstName, lastName, streetAddress, city, state, zipCode, country } = address;
-  
+const SavedAddressCard: React.FC<SavedAddressCardProps> = ({ address }) => {
   return (
-    <div className="flex flex-col">
-      <span className="font-medium">{firstName} {lastName}</span>
-      <span className="text-gray-600 text-sm">{streetAddress}</span>
-      <span className="text-gray-600 text-sm">{city}, {state} {zipCode}</span>
-      <span className="text-gray-600 text-sm">{country}</span>
+    <div className="w-full">
+      <div className="flex justify-between items-start">
+        <div>
+          <h3 className="font-medium">
+            {address.firstName} {address.lastName}
+          </h3>
+          <p className="text-sm text-gray-600">{address.streetAddress}</p>
+          <p className="text-sm text-gray-600">
+            {address.city}, {address.state} {address.zipCode}
+          </p>
+          <p className="text-sm text-gray-600">{address.country}</p>
+          <p className="text-sm text-gray-600">{address.phoneNumber}</p>
+          <p className="text-sm text-gray-600">{address.email}</p>
+        </div>
+      </div>
     </div>
   );
 };

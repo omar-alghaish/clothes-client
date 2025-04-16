@@ -13,6 +13,7 @@ export default async function RootLayout({
       <div>{children}</div>
       <BootIcon />
       <Footer />
+      {/* <Toaster /> */}
     </div>
   );
 }

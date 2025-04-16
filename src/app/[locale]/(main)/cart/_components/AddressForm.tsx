@@ -1,21 +1,19 @@
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { toast } from "sonner";
+import { Check, ChevronsUpDown, Search, X } from "lucide-react";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { cn } from "@/lib/utils";
+import { useCreateAddressMutation, useUpdateAddressMutation } from "@/redux/features/user/userApi";
 
 const validationSchema = Yup.object().shape({
   firstName: Yup.string().required("First name is required"),
   lastName: Yup.string().required("Last name is required"),
-  phone: Yup.string()
+  phoneNumber: Yup.string()
     .matches(/^[+]?[(]?[0-9]{1,4}[)]?[-\s./0-9]*$/, "Invalid phone number")
     .required("Phone is required"),
   email: Yup.string().email("Invalid email").required("Email is required"),
@@ -27,21 +25,12 @@ const validationSchema = Yup.object().shape({
 });
 
 interface AddressFormProps {
-  onSubmit: (values: {
-    firstName: string;
-    lastName: string;
-    phone: string;
-    email: string;
-    country: string;
-    city: string;
-    state: string;
-    streetAddress: string;
-    zipCode: string;
-  }) => void;
+  onSuccess?: (id?: string) => void;
   initialValues?: {
+    id?: string;
     firstName: string;
     lastName: string;
-    phone: string;
+    phoneNumber: string;
     email: string;
     country: string;
     city: string;
@@ -51,12 +40,28 @@ interface AddressFormProps {
   };
 }
 
-const AddressForm: React.FC<AddressFormProps> = ({ onSubmit, initialValues }) => {
+const AddressForm: React.FC<AddressFormProps> = ({ onSuccess, initialValues }) => {
+  const [createAddress, { isLoading: isCreating }] = useCreateAddressMutation();
+  const [updateAddress, { isLoading: isUpdating }] = useUpdateAddressMutation();
+  
+  const isLoading = isCreating || isUpdating;
+  const isEditing = Boolean(initialValues?.id);
+
+  // Location data states
+  const [countries, setCountries] = useState<{ value: string; label: string }[]>([]);
+  const [states, setStates] = useState<{ value: string; label: string }[]>([]);
+  const [cities, setCities] = useState<{ value: string; label: string }[]>([]);
+  
+  // Loading states
+  const [loadingCountries, setLoadingCountries] = useState(false);
+  const [loadingStates, setLoadingStates] = useState(false);
+  const [loadingCities, setLoadingCities] = useState(false);
+
   const formik = useFormik({
     initialValues: initialValues || {
       firstName: "",
       lastName: "",
-      phone: "",
+      phoneNumber: "",
       email: "",
       country: "",
       city: "",
@@ -65,10 +70,161 @@ const AddressForm: React.FC<AddressFormProps> = ({ onSubmit, initialValues }) =>
       zipCode: "",
     },
     validationSchema,
-    onSubmit: (values) => {
-      onSubmit(values);
+    onSubmit: async (values) => {
+      try {
+        if (isEditing && initialValues?.id) {
+          const result = await updateAddress({ 
+            id: initialValues.id, 
+            address: values 
+          }).unwrap();
+
+          console.log(result)
+          
+          toast.success("Address updated successfully!");
+          if (onSuccess) onSuccess(initialValues.id);
+        } else {
+          const result = await createAddress(values).unwrap();
+          const addressId = result?._id;
+          
+          toast.success("Address saved successfully!");
+          if (onSuccess) onSuccess(addressId);
+        }
+      } catch (error) {
+        console.error('Failed to save address:', error);
+        toast.error('Failed to save address. Please try again.');
+      }
     },
   });
+
+  useEffect(() => {
+    fetchCountries();
+  }, []);
+
+  // Fetch states when country changes
+  useEffect(() => {
+    if (formik.values.country) {
+      fetchStates(formik.values.country);
+      // Reset state and city when country changes
+      if (!isEditing) {
+        formik.setFieldValue("state", "");
+        formik.setFieldValue("city", "");
+      }
+    }
+  }, [formik.values.country]);
+
+  // Fetch cities when state changes
+  useEffect(() => {
+    if (formik.values.state) {
+      fetchCities(formik.values.country, formik.values.state);
+      // Reset city when state changes
+      if (!isEditing) {
+        formik.setFieldValue("city", "");
+      }
+    }
+  }, [formik.values.state]);
+
+  // Fetch countries from API
+  const fetchCountries = async () => {
+    setLoadingCountries(true);
+    try {
+      const response = await fetch('https://countriesnow.space/api/v0.1/countries');
+      const data = await response.json();
+      
+      if (data.data && Array.isArray(data.data)) {
+        const formattedCountries = data.data.map((country: { country: string; iso2?: string }) => ({
+          value: country.iso2 || country.country,
+          label: country.country
+        }));
+        setCountries(formattedCountries);
+      }
+    } catch (error) {
+      console.error('Error fetching countries:', error);
+      toast.error('Failed to load countries');
+    } finally {
+      setLoadingCountries(false);
+    }
+  };
+
+  // Fetch states for a specific country
+  const fetchStates = async (countryCode: string) => {
+    setLoadingStates(true);
+    setStates([]);
+    try {
+      // Find country name from the selected country code
+      const countryName = countries.find(c => c.value === countryCode)?.label;
+      
+      if (!countryName) {
+        setStates([]);
+        return;
+      }
+      
+      const response = await fetch('https://countriesnow.space/api/v0.1/countries/states', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ country: countryName }),
+      });
+      
+      const data = await response.json();
+      
+      if (data.data && data.data.states && Array.isArray(data.data.states)) {
+        const formattedStates = data.data.states.map((state: { state_code?: string; name: string }) => ({
+          value: state.state_code || state.name,
+          label: state.name
+        }));
+        setStates(formattedStates);
+      }
+    } catch (error) {
+      console.error('Error fetching states:', error);
+      toast.error('Failed to load states');
+    } finally {
+      setLoadingStates(false);
+    }
+  };
+
+  // Fetch cities for a specific country and state
+  const fetchCities = async (countryCode: string, stateCode: string) => {
+    setLoadingCities(true);
+    setCities([]);
+    try {
+      // Find country name from the selected country code
+      const countryName = countries.find(c => c.value === countryCode)?.label;
+      // Find state name from the selected state code
+      const stateName = states.find(s => s.value === stateCode)?.label;
+      
+      if (!countryName || !stateName) {
+        setCities([]);
+        return;
+      }
+      
+      const response = await fetch('https://countriesnow.space/api/v0.1/countries/state/cities', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          country: countryName,
+          state: stateName
+        }),
+      });
+      
+      const data = await response.json();
+      
+      if (data.data && Array.isArray(data.data)) {
+        const formattedCities = data.data.map((city: string) => ({
+          value: city,
+          label: city
+        }));
+        setCities(formattedCities);
+      }
+    } catch (error) {
+      console.error('Error fetching cities:', error);
+      toast.error('Failed to load cities');
+    } finally {
+      setLoadingCities(false);
+    }
+  };
 
   return (
     <form onSubmit={formik.handleSubmit} className="space-y-6">
@@ -97,12 +253,12 @@ const AddressForm: React.FC<AddressFormProps> = ({ onSubmit, initialValues }) =>
 
         <FormField
           label="Phone"
-          name="phone"
+          name="phoneNumber"
           placeholder="+1 234 567 890"
-          value={formik.values.phone}
+          value={formik.values.phoneNumber}
           onChange={formik.handleChange}
           onBlur={formik.handleBlur}
-          error={formik.touched.phone && formik.errors.phone}
+          error={formik.touched.phoneNumber && formik.errors.phoneNumber}
         />
 
         <FormField
@@ -119,43 +275,48 @@ const AddressForm: React.FC<AddressFormProps> = ({ onSubmit, initialValues }) =>
         <FormSelect
           label="Country"
           name="country"
-          placeholder="Select Country"
+          placeholder={loadingCountries ? "Loading countries..." : "Select Country"}
           value={formik.values.country}
           onChange={(value: string) => formik.setFieldValue("country", value)}
           error={formik.touched.country && formik.errors.country}
-          options={[
-            { value: "US", label: "United States" },
-            { value: "CA", label: "Canada" },
-            { value: "UK", label: "United Kingdom" },
-          ]}
-        />
-
-        <FormSelect
-          label="City"
-          name="city"
-          placeholder="Select City"
-          value={formik.values.city}
-          onChange={(value: string) => formik.setFieldValue("city", value)}
-          error={formik.touched.city && formik.errors.city}
-          options={[
-            { value: "New York", label: "New York" },
-            { value: "Los Angeles", label: "Los Angeles" },
-            { value: "Chicago", label: "Chicago" },
-          ]}
+          options={countries}
+          isLoading={loadingCountries}
         />
 
         <FormSelect
           label="State"
           name="state"
-          placeholder="Select State"
+          placeholder={
+            !formik.values.country 
+              ? "Select country first" 
+              : loadingStates 
+                ? "Loading states..." 
+                : "Select State"
+          }
           value={formik.values.state}
           onChange={(value: string) => formik.setFieldValue("state", value)}
           error={formik.touched.state && formik.errors.state}
-          options={[
-            { value: "NY", label: "New York" },
-            { value: "CA", label: "California" },
-            { value: "TX", label: "Texas" },
-          ]}
+          options={states}
+          isLoading={loadingStates}
+          isDisabled={!formik.values.country || loadingStates}
+        />
+
+        <FormSelect
+          label="City"
+          name="city"
+          placeholder={
+            !formik.values.state 
+              ? "Select state first" 
+              : loadingCities 
+                ? "Loading cities..." 
+                : "Select City"
+          }
+          value={formik.values.city}
+          onChange={(value: string) => formik.setFieldValue("city", value)}
+          error={formik.touched.city && formik.errors.city}
+          options={cities}
+          isLoading={loadingCities}
+          isDisabled={!formik.values.state || loadingCities}
         />
 
         <FormField
@@ -182,9 +343,9 @@ const AddressForm: React.FC<AddressFormProps> = ({ onSubmit, initialValues }) =>
       <Button 
         type="submit" 
         className="w-full"
-        disabled={!formik.isValid || formik.isSubmitting}
+        disabled={!formik.isValid || isLoading}
       >
-        Save Address
+        {isLoading ? 'Saving...' : isEditing ? 'Update Address' : 'Save Address'}
       </Button>
     </form>
   );
@@ -226,24 +387,114 @@ interface FormSelectProps {
   onChange: (value: string) => void;
   error?: string | boolean;
   options: { value: string; label: string }[];
+  isLoading?: boolean;
+  isDisabled?: boolean;
 }
 
-const FormSelect: React.FC<FormSelectProps> = ({ label, placeholder, value, onChange, error, options }) => {
+const FormSelect: React.FC<FormSelectProps> = ({ 
+  label, 
+  placeholder, 
+  value, 
+  onChange, 
+  error, 
+  options,
+  isLoading = false,
+  isDisabled = false
+}) => {
+  const [open, setOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+  const inputRef = useRef<HTMLInputElement>(null);
+  
+  // Focus input when popover opens
+  useEffect(() => {
+    if (open && inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [open]);
+  
+  // Filter options based on search term
+  const filteredOptions = options.filter(option => 
+    option.label.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+  
+  // Get selected option label
+  const selectedLabel = value ? 
+    options.find(option => option.value === value)?.label || placeholder : 
+    placeholder;
+  
   return (
     <div className="space-y-2">
       <Label>{label}</Label>
-      <Select value={value} onValueChange={onChange}>
-        <SelectTrigger>
-          <SelectValue placeholder={placeholder} />
-        </SelectTrigger>
-        <SelectContent>
-          {options.map((option) => (
-            <SelectItem key={option.value} value={option.value}>
-              {option.label}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
+      <Popover open={open && !isDisabled} onOpenChange={(openState) => !isDisabled && setOpen(openState)}>
+        <PopoverTrigger asChild>
+          <Button
+            variant="outline"
+            role="combobox"
+            aria-expanded={open}
+            className="w-full justify-between"
+            disabled={isDisabled}
+          >
+            {isLoading ? (
+              <div className="flex items-center">
+                <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                <span className="truncate">Loading...</span>
+              </div>
+            ) : (
+              <span className="truncate">{selectedLabel}</span>
+            )}
+            <ChevronsUpDown className="ml-2 h-4 w-4 opacity-50" />
+          </Button>
+        </PopoverTrigger>
+        <PopoverContent className="w-full p-0" align="start">
+          <div className="flex items-center border-b p-2">
+            <Search className="mr-2 h-4 w-4 opacity-50" />
+            <Input
+              ref={inputRef}
+              placeholder="Search..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="border-0 p-1 shadow-none focus-visible:ring-0"
+            />
+            {searchTerm && (
+              <X
+                className="h-4 w-4 opacity-50 cursor-pointer" 
+                onClick={() => setSearchTerm("")}
+              />
+            )}
+          </div>
+          
+          <div className="max-h-60 overflow-y-auto">
+            {filteredOptions.length === 0 ? (
+              <div className="p-2 text-center text-sm text-muted-foreground">
+                No options found.
+              </div>
+            ) : (
+              filteredOptions.map((option) => (
+                <div
+                  key={option.value}
+                  className={cn(
+                    "flex cursor-pointer items-center justify-between px-2 py-1.5 hover:bg-muted",
+                    value === option.value && "bg-muted"
+                  )}
+                  onClick={() => {
+                    onChange(option.value);
+                    setSearchTerm("");
+                    setOpen(false);
+                  }}
+                >
+                  <span>{option.label}</span>
+                  {value === option.value && (
+                    <Check className="h-4 w-4" />
+                  )}
+                </div>
+              ))
+            )}
+          </div>
+        </PopoverContent>
+      </Popover>
       {error && <p className="text-red-500 text-sm">{error}</p>}
     </div>
   );

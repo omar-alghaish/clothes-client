@@ -53,6 +53,14 @@ export const cartApi = createApi({
       }),
       invalidatesTags: ['Cart'],
     }),
+    addPaymentCard: builder.mutation({
+      query: (cardData) => ({
+        url: '/payment-cards',
+        method: 'POST',
+        body: cardData,
+      }),
+      invalidatesTags: ['Cart'],
+    }),
   }),
 });
 
@@ -62,4 +70,5 @@ export const {
   useRemoveFromCartMutation, 
   useUpdateCartItemMutation ,
   useRemoveCartMutation,
+  useAddPaymentCardMutation
 } = cartApi;

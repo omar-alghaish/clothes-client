@@ -30,6 +30,7 @@ export default function Home() {
   // const t = useTranslations("HomePage");
   return (
     <div className="">
+    {/* <CavemanNotFound /> */}
       <Section1 />
       <Section2 />
       <Section3 />

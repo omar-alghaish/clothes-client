@@ -404,7 +404,7 @@ const Filters = () => {
   const router = useRouter();
 
   // Filter options
-  const colors = ["Red", "Blue", "Green", "Black", "White"];
+  const colors = ["red", "blue", "green", "black", "white", "brown"];
   const sizes = ["S", "M", "L", "XL", "XXL"];
   const brands = ["Nike", "Adidas", "Puma", "Under Armour", "Reebok"];
   const prices = ["0 - 50", "50 - 100", "100 - 150", "150 - 200", "200+"];
@@ -421,7 +421,6 @@ const Filters = () => {
   const handleFilterChange = (filterType: string, value: string) => {
     const params = new URLSearchParams(searchParams);
     const values = params.getAll(filterType);
-
     if (values.includes(value)) {
       params.delete(filterType);
       values.filter(v => v !== value).forEach(v => params.append(filterType, v));
@@ -436,8 +435,8 @@ const Filters = () => {
   const handleMasterCategory = (gender: "male" | "female") => {
     const params = new URLSearchParams(searchParams);
     const subCategories = {
-      male: ["male-Shirts", "male-Pants", "male-Shoes"],
-      female: ["female-Dresses", "female-Tops", "female-Shoes"]
+      male: ["male-shirt", "male-pants", "male-shoes", "male-jacket"],
+      female: ["female-dresses", "female-tops", "female-shoes", "female-jacket"]
     }[gender];
 
     const current = params.getAll("category");
@@ -457,8 +456,8 @@ const Filters = () => {
   };
 
   // Calculate master checkbox states
-  const maleCategories = ["male-Shirts", "male-Pants", "male-Shoes"];
-  const femaleCategories = ["female-Dresses", "female-Tops", "female-Shoes"];
+  const maleCategories = ["male-shirt", "male-pants", "male-shoes", "male-jacket"];
+  const femaleCategories = ["female-dresses", "female-tops", "female-shoes", "female-jacket"];
   
   const maleSelected = currentFilters.category.filter(c => maleCategories.includes(c));
   const femaleSelected = currentFilters.category.filter(c => femaleCategories.includes(c));
@@ -484,7 +483,7 @@ const Filters = () => {
                   <AccordionTrigger>Male</AccordionTrigger>
                 </div>
                 <AccordionContent className="flex flex-col space-y-2 ml-6">
-                  {["Shirts", "Pants", "Shoes"].map((item) => (
+                  {["shirt", "pants", "shoes","jacket"].map((item) => (
                     <div key={item} className="flex items-center space-x-2">
                       <Checkbox
                         id={`male-${item}`}
@@ -507,7 +506,7 @@ const Filters = () => {
                   <AccordionTrigger>Female</AccordionTrigger>
                 </div>
                 <AccordionContent className="flex flex-col space-y-2 ml-6">
-                  {["Dresses", "Tops", "Shoes"].map((item) => (
+                  {["dresses", "tops", "shoes", "jacket"].map((item) => (
                     <div key={item} className="flex items-center space-x-2">
                       <Checkbox
                         id={`female-${item}`}

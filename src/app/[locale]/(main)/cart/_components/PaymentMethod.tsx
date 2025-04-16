@@ -1,73 +1,52 @@
-"use client";
-import React, { useState } from "react";
-import Payment from "./payment";
+import { useState } from "react";
+import { IPaymentCard, useGetPaymentCardsQuery } from "@/redux/features/user/userApi";
 import AddCard from "./AddCard";
-import { useAppSelector, useAppDispatch } from "@/redux/store/hooks";
-import { addPaymentMethod, selectPaymentMethods } from "@/redux/features/cartSlice";
+import Payment from "./payment";
 
 type PaymentType = "credit-card" | "google-pay" | "mastercard" | "visa" | "paypal";
-
-interface CardValues {
-  cardNumber: string;
-  holderName: string;
-  expireDate: string;
-  cvv: string;
-}
+type ExtendedPaymentCard = IPaymentCard & { type: PaymentType };
 
 const PaymentMethod = () => {
-  const dispatch = useAppDispatch();
-  const paymentMethods = useAppSelector(selectPaymentMethods);
   const [selectedPayment, setSelectedPayment] = useState<string>("");
   const [showAddCard, setShowAddCard] = useState(false);
+  const { data: paymentMethods, isLoading,  refetch } = useGetPaymentCardsQuery({});
 
   const handlePaymentSelection = (paymentId: string) => {
     setSelectedPayment(paymentId);
-    setShowAddCard(false); // Close add card form when selecting existing payment
+    setShowAddCard(false);
   };
 
   const handleAddNewPaymentSelection = () => {
-    setSelectedPayment(""); // Clear selected payment
+    setSelectedPayment("");
     setShowAddCard(true);
   };
 
-  const handleAddCard = (values: CardValues) => {
-    const maskedCard = values.cardNumber.replace(/.(?=.{4})/g, '*');
-    const newPayment = {
-      id: `card-${Date.now()}`,
-      type: 'credit-card' as PaymentType,
-      details: {
-        holderName: values.holderName,
-        expireDate: values.expireDate,
-        cvv: values.cvv
-      },
-      cardNumber: maskedCard
-    };
-    dispatch(addPaymentMethod(newPayment));
-    setSelectedPayment(newPayment.id);
+  const handleAddCardSuccess = async (newCardId: string) => {
+    await refetch();
+    setSelectedPayment(newCardId);
     setShowAddCard(false);
   };
+
+  if (isLoading) return <div>Loading payment methods...</div>;
+  // if (error) return <div>Error loading payment methods</div>;
 
   return (
     <div className="space-y-6">
       <div className="space-y-4">
-        {paymentMethods.map((payment) => (
+        {paymentMethods?.map((payment: ExtendedPaymentCard) => (
           <div
-            key={payment.id}
-            className={`border rounded-lg p-4 ${selectedPayment === payment.id ? 'border-primary' : ''}`}
+            key={payment._id}
+            className={`border rounded-lg p-4 ${selectedPayment === payment._id ? 'border-primary' : ''}`}
           >
             <label className="flex items-center gap-4 cursor-pointer">
               <input
                 type="radio"
                 name="paymentMethod"
-                value={payment.id}
-                checked={selectedPayment === payment.id}
-                onChange={() => handlePaymentSelection(payment.id)}
+                value={payment._id}
+                checked={selectedPayment === payment._id}
+                onChange={() => handlePaymentSelection(payment._id)}
                 className="h-5 w-5 text-primary focus:ring-primary"
-                aria-labelledby={`label-${payment.id}`}
               />
-              <span id={`label-${payment.id}`} className="sr-only">
-                {`Select ${payment.type} ending in ${payment.cardNumber ? payment.cardNumber.slice(-4) : ''}`}
-              </span>
               <Payment
                 type={payment.type}
                 cardNumber={payment.cardNumber || ''}
@@ -75,6 +54,7 @@ const PaymentMethod = () => {
             </label>
           </div>
         ))}
+
         <div className={`border rounded-lg p-4 ${showAddCard ? 'border-primary' : ''}`}>
           <label className="flex items-center gap-4 cursor-pointer">
             <input
@@ -82,28 +62,21 @@ const PaymentMethod = () => {
               name="paymentMethod"
               value="new"
               checked={showAddCard}
-              onChange={() => handleAddNewPaymentSelection()}
+              onChange={handleAddNewPaymentSelection}
               className="h-5 w-5 text-primary focus:ring-primary"
-              aria-labelledby="label-new-payment"
             />
-            <span id="label-new-payment" className="sr-only">Add new payment method</span>
             <div className="flex items-center gap-2">
               <span className="text-lg font-medium">Add new payment method</span>
             </div>
           </label>
         </div>
+        
         {showAddCard && (
           <div className="mt-4">
-            <AddCard onSubmit={handleAddCard} />
+            <AddCard onSuccess={handleAddCardSuccess} />
           </div>
         )}
       </div>
-      {/* <Button
-        className="w-full"
-        disabled={!selectedPayment && !showAddCard}
-      >
-        Continue to Review
-      </Button> */}
     </div>
   );
 };

@@ -44,6 +44,7 @@ const MainContent = () => {
   const brandParams = searchParams.getAll('brand');
   const priceParams = searchParams.getAll('price');
   const pageParam = searchParams.get('page');
+  const sizeParams = searchParams.get('size');
 
   const currentPage = Number(pageParam) || 1;
 
@@ -53,6 +54,7 @@ const MainContent = () => {
     brand: brandParams,
     price: priceParams,
     page: currentPage,
+    size: sizeParams || []
   });
 console.log(data)
   const totalItems = data?.totalItems || 0;
