@@ -22,14 +22,15 @@ export interface CartitemProps {
   rating: string;
 }
 
-const MainContent: FC<CartitemProps> = ({ img, name,  price, rating, _id }) => {
+const MainContent: FC<CartitemProps> = ({ img, name, price, rating, _id }) => {
   const locale = useLocale();
   const checkAuth = useAuthRedirect();
   const [imgLoading, setImgLoading] = useState(true);
   const [brandImgLoading] = useState(true);
   const imgRef = useRef<HTMLImageElement>(null);
 
-  const [addToCart] = useAddToCartMutation(); useEffect(() => {
+  const [addToCart] = useAddToCartMutation();
+   useEffect(() => {
     // Check if image is already cached
     if (imgRef.current?.complete) {
       setImgLoading(false);
@@ -53,7 +54,7 @@ const MainContent: FC<CartitemProps> = ({ img, name,  price, rating, _id }) => {
   };
   const handleLove = (id: string) => {
     checkAuth(() => {
-      console.log("Action executed: User is authenticated!",id);
+      console.log("Action executed: User is authenticated!", id);
       // Perform authenticated action
     });
   };

@@ -1,7 +1,7 @@
-import FavoritesList from "@/app/[locale]/favorites/_components/FavoritesList"
+// import FavoritesList from "@/app/[locale]/favorites/_components/FavoritesList"
 import { CartItem } from "@/components/common";
-import i14 from '../../../../../assets/images/i14.jpg'
-import hm from '../../../../../assets/brandIcons/hm.png'
+import i14 from '../../../../../../assets/images/i14.jpg'
+import hm from '../../../../../../assets/brandIcons/hm.png'
 export default function TryMoreSec() {
     const favoriteItems = [
         {

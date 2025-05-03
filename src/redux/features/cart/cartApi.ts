@@ -61,6 +61,14 @@ export const cartApi = createApi({
       }),
       invalidatesTags: ['Cart'],
     }),
+    getPaymentCards: builder.query({
+      query: (cardData) => ({
+        url: '/payment-cards',
+        method: 'GET',
+        body: cardData,
+      }),
+      providesTags: ['Cart'],
+    }),
   }),
 });
 
@@ -70,5 +78,6 @@ export const {
   useRemoveFromCartMutation, 
   useUpdateCartItemMutation ,
   useRemoveCartMutation,
-  useAddPaymentCardMutation
+  useAddPaymentCardMutation,
+  useGetPaymentCardsQuery
 } = cartApi;

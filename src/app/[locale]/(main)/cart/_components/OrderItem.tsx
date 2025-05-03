@@ -214,14 +214,20 @@ const OrderItem: FC<OrderItemProps> = ({ item }) => {
             <span className="text-muted-foreground text-base md:text-lg">
               Brand:
             </span>
+           
             <div className="h-4 md:h-5 w-auto">
-              <Image
-                className="object-contain h-full w-full"
-                src={item.brand.brandLogo}
-                width={100}
-                height={100}
-                alt={`${item.product.name} brand`}
-              />
+               {
+              // !item.brand.brandLogo ?   <Image
+              //   className="object-contain h-full w-full"
+              //   src={item.brand.brandLogo}
+              //   width={100}
+              //   height={100}
+              //   alt={`${item.product.name} brand`}
+              // />: 
+              
+              <h2>{item.brand.brandName}</h2>
+            }
+            
             </div>
           </div>
         </div>
