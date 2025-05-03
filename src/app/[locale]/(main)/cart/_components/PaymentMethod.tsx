@@ -2,6 +2,8 @@ import { useState } from "react";
 import { IPaymentCard, useGetPaymentCardsQuery } from "@/redux/features/user/userApi";
 import AddCard from "./AddCard";
 import Payment from "./payment";
+import { useDispatch } from "react-redux";
+import { setPaymentId } from "@/redux/features/orders/orders.slice"
 
 type PaymentType = "credit-card" | "google-pay" | "mastercard" | "visa" | "paypal";
 type ExtendedPaymentCard = IPaymentCard & { type: PaymentType };
@@ -9,31 +11,38 @@ type ExtendedPaymentCard = IPaymentCard & { type: PaymentType };
 const PaymentMethod = () => {
   const [selectedPayment, setSelectedPayment] = useState<string>("");
   const [showAddCard, setShowAddCard] = useState(false);
-  const { data: paymentMethods, isLoading,  refetch } = useGetPaymentCardsQuery({});
+  const { data: paymentMethods, isLoading, refetch, error } = useGetPaymentCardsQuery({});
+  const dispatch = useDispatch();
 
   const handlePaymentSelection = (paymentId: string) => {
     setSelectedPayment(paymentId);
+    dispatch(setPaymentId(paymentId));
     setShowAddCard(false);
   };
 
+  console.log(paymentMethods);
+
   const handleAddNewPaymentSelection = () => {
     setSelectedPayment("");
+    dispatch(setPaymentId(""));
     setShowAddCard(true);
   };
 
   const handleAddCardSuccess = async (newCardId: string) => {
     await refetch();
     setSelectedPayment(newCardId);
+    dispatch(setPaymentId(newCardId));
     setShowAddCard(false);
   };
 
   if (isLoading) return <div>Loading payment methods...</div>;
-  // if (error) return <div>Error loading payment methods</div>;
+  if (error) return <div>Error loading payment methods</div>;
 
   return (
     <div className="space-y-6">
+      <h1 className="font-extrabold text-3xl mb-6">Payment Method</h1>
       <div className="space-y-4">
-        {paymentMethods?.map((payment: ExtendedPaymentCard) => (
+        {paymentMethods?.data?.paymentCards?.map((payment: ExtendedPaymentCard) => (
           <div
             key={payment._id}
             className={`border rounded-lg p-4 ${selectedPayment === payment._id ? 'border-primary' : ''}`}

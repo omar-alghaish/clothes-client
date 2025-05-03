@@ -1,7 +1,7 @@
 import Image from "next/image";
-import Ai1 from "../../../../assets/images/Ai1.png";
-import Ai2 from "../../../../assets/images/Ai2.png";
-import Ai3 from "../../../../assets/images/Ai3.png";
+import Ai1 from "../../../../../assets/images/Ai1.png";
+import Ai2 from "../../../../../assets/images/Ai2.png";
+import Ai3 from "../../../../../assets/images/Ai3.png";
 
 export default function VirtualSec() {
     return (

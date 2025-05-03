@@ -1,80 +1,3 @@
-// "use client";
-// import { useState, useEffect } from "react";
-// import Image from "next/image";
-// import bootIcon from "@/assets/images/boot.png";
-
-// const BootIcon = () => {
-//   const [position, setPosition] = useState({ x: 0, y: 0 });
-//   const [dragging, setDragging] = useState(false);
-//   const [offset, setOffset] = useState({ x: 0, y: 0 });
-//   const [isOpen, setIsOpen] = useState(false);
-
-//   // Set initial position to bottom right
-//   useEffect(() => {
-//     const updatePosition = () => {
-//       setPosition({
-//         x: window.innerWidth - 80,  // 80px is the element's width
-//         y: window.innerHeight - 80  // 80px is the element's height
-//       });
-//     };
-    
-//     updatePosition();
-    
-//     // Optional: Update position on window resize
-//     window.addEventListener('resize', updatePosition);
-//     return () => window.removeEventListener('resize', updatePosition);
-//   }, []);
-
-//   const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
-//     setDragging(true);
-//     setOffset({
-//       x: e.clientX - position.x,
-//       y: e.clientY - position.y,
-//     });
-//   };
-
-//   useEffect(() => {
-//     const handleMouseMove = (e: MouseEvent) => {
-//       if (dragging) {
-//         setPosition({
-//           x: e.clientX - offset.x,
-//           y: e.clientY - offset.y,
-//         });
-//       }
-//     };
-
-//     const handleMouseUp = () => setDragging(false);
-
-//     if (dragging) {
-//       window.addEventListener("mousemove", handleMouseMove);
-//       window.addEventListener("mouseup", handleMouseUp);
-//     }
-
-//     return () => {
-//       window.removeEventListener("mousemove", handleMouseMove);
-//       window.removeEventListener("mouseup", handleMouseUp);
-//     };
-//   }, [dragging, offset]);
-
-//   return (
-//     <div
-//       className="fixed cursor-grab active:cursor-grabbing w-[80px] h-[80px] flex items-center justify-center rounded-full bg-black/35 border z-50"
-//       style={{
-//         left: position.x,
-//         top: position.y,
-//         userSelect: "none",
-//       }}
-//       onMouseDown={handleMouseDown}
-//     >
-//       <Image src={bootIcon} alt="boot" width={50} height={50} />
-//     </div>
-//   );
-// };
-
-// export default BootIcon;
-
-
-
 "use client";
 import { useState, useEffect, useCallback } from "react";
 import Image from "next/image";
@@ -90,7 +13,8 @@ const BootIcon = () => {
   const [isOpen, setIsOpen] = useState(false);
   const { isMobile } = useViewport();
 
-  // Set initial position to bottom-right
+  const apiKey = process.env.NEXT_PUBLIC_GEMINI_API_KEY;
+
   useEffect(() => {
     const updatePosition = () => {
       setPosition({
@@ -193,7 +117,7 @@ const BootIcon = () => {
             maxWidth: isMobile ? "100%" : "50vw",
           }}
         >
-          <ChatBoot />
+          <ChatBoot apiKey={apiKey} />
         </DialogContent>
       </Dialog>
     </>

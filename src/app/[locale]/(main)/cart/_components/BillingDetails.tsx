@@ -178,9 +178,9 @@ import React, { useState, useEffect } from "react";
 import AddressForm from "./AddressForm";
 import SavedAddressCard from "./AddressCard";
 import { IAddress, useGetAddressesQuery } from "@/redux/features/user/userApi";
-import {setAddressId } from "@/redux/features/orderSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
+import { setAddressId } from "@/redux/features/orders/orders.slice";
 
 const BillingDetails = () => {
   const { data: addresses , isLoading } = useGetAddressesQuery({});
@@ -222,9 +222,9 @@ const BillingDetails = () => {
 
 
   useEffect(() => {
-    if (addresses?.length > 0 && !selectedAddress) {
-      setSelectedAddress(addresses[0]._id);
-      dispatch(setAddressId(addresses[0]._id));
+    if (addresses?.data?.addresses?.length > 0 && !selectedAddress) {
+      setSelectedAddress(addresses?.data?.addresses[0]._id);
+      dispatch(setAddressId(addresses?.data?.addresses[0]._id));
     }
   }, [addresses, selectedAddress, dispatch]);
 

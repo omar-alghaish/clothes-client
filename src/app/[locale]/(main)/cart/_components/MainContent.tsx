@@ -6,6 +6,9 @@ import { Button } from "@/components/ui/button";
 import PaymentMethod from "./PaymentMethod";
 import BillingDetails from "./BillingDetails";
 import { useGetCartQuery, useRemoveCartMutation } from "@/redux/features/cart/cartApi";
+import { useAddOrderMutation } from "@/redux/features/orders/orders.api";
+import { useSelector } from "react-redux";
+import { RootState } from "@/redux/store";
 import { Loader2 } from "lucide-react";
 import { toast, Toaster } from "sonner";
 import Link from "next/link";
@@ -14,11 +17,16 @@ const MainContent = () => {
   const [status, setStatus] = React.useState<
     "checkout" | "continuePayment" | "confirmPayment"
   >("checkout");
-  
+
   const { data: cart, isLoading, isError, refetch } = useGetCartQuery({});
   const [clearCart, { isLoading: isClearingCart }] = useRemoveCartMutation();
+  const [addOrder, { isLoading: isOrderProcessing }] = useAddOrderMutation();
   
+  // Get address ID from Redux store
+  const { addressId, paymentId } = useSelector((state: RootState) => state.order);
+
   const cartItems = cart?.data?.items || [];
+  const cartId = cart?.data?._id;
 
   const handleClearCart = async () => {
     try {
@@ -31,7 +39,7 @@ const MainContent = () => {
     }
   };
 
-  const handleNextStep = () => {
+  const handleNextStep = async () => {
     switch (status) {
       case "checkout":
         setStatus("continuePayment");
@@ -40,10 +48,44 @@ const MainContent = () => {
         setStatus("confirmPayment");
         break;
       case "confirmPayment":
+        // Check if we have all required data
+        if (!addressId) {
+          toast.error("Please select a billing address");
+          return;
+        }
+        
+        if (!paymentId) {
+          toast.error("Please select a payment method");
+          return;
+        }
+        
+        if (!cartId) {
+          toast.error("Your cart is empty");
+          return;
+        }
+        
+        try {
+          // Process the order
+          const orderData = {
+            addressId,
+            paymentId,
+            cartId
+          };
+          
+          await addOrder(orderData).unwrap();
+          toast.success("Order placed successfully!");
+          
+          // Redirect to success page or order history
+          // You might want to use router.push('/order-success') here
+          
+        } catch (error) {
+          console.error("Failed to place order:", error);
+          toast.error("Failed to place order. Please try again.");
+        }
         break;
     }
   };
-console.log(cart)
+
   const renderContent = () => {
     if (isLoading) {
       return (
@@ -109,15 +151,15 @@ console.log(cart)
   };
 
   return (
-    <div className="container flex flex-col md:flex-row gap-20">
+    <div className="container min-h-screen flex flex-col md:flex-row gap-20">
       <Toaster position="top-center" />
       <div className="flex-1">{renderContent()}</div>
       <div className="w-full md:w-[350px] space-y-4 h-max top-0 sticky">
-        <OrderSummary 
-          status={status} 
-          onNextStep={handleNextStep} 
+        <OrderSummary
+          status={status}
+          onNextStep={handleNextStep}
           cart={cart?.data}
-          isLoading={isLoading || isClearingCart} 
+          isLoading={isLoading || isClearingCart || isOrderProcessing}
         />
       </div>
     </div>

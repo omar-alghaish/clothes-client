@@ -5,7 +5,9 @@ import { useParams } from "next/navigation";
 import Section1 from "./Section1";
 import Section2 from "./Section2";
 import { useGetProductQuery } from "@/redux/features/products/productsApi";
+import Loading from "@/app/[locale]/loading";
 export interface IProduct {
+  _id: string;
   brandIcon: string;
   title: string;
   rating: string;
@@ -24,7 +26,7 @@ const MainContent = () => {
 
   console.log(data);
 
-  if (isLoading) return <div className="text-center">Loading...</div>;
+  if (isLoading) return <div className="text-center"><Loading /></div>;
   if (error) return <div className="text-center text-red-500">Error loading product</div>;
 
   return (
