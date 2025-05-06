@@ -60,10 +60,11 @@
 // }
 
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Cairo } from "next/font/google";
+import { Geist, Geist_Mono } from "next/font/google";
 import { getMessages } from "next-intl/server";
 import "../../styles/globals.css";
 import { Providers } from "./providers";
+
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -72,12 +73,6 @@ const geistSans = Geist({
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
-});
-
-const cairoFont = Cairo({
-  variable: "--font-cairo",
-  subsets: ["arabic"],
-  weight: ["300", "400", "600"], // Specify weights
 });
 
 export const metadata: Metadata = {
@@ -96,10 +91,8 @@ export default async function RootLayout({
 
   return (
     <html lang={locale}>
-      <body className={`antialiased ${
-        locale === "ar" ? cairoFont.variable : geistMono.variable
-      } ${geistSans.variable}`}>
-        <Providers  messages={messages}>
+      <body className={`antialiased ${geistMono.variable} ${geistSans.variable}`}>
+        <Providers messages={messages}>
           {children}
         </Providers>
       </body>
