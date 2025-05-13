@@ -10,11 +10,15 @@ import { useRouter, useSearchParams } from "next/navigation";
 import React, { FC, useEffect, useState } from "react";
 import { toast, Toaster } from "sonner";
 
-interface IProductInfo {
+export interface IProductInfo {
   product: {
     _id: string;
-    brandIcon: string;
-    title: string;
+    brand: {
+      _id: string;
+      brandName: string;
+      brandLogo: string;
+    };
+    name: string;
     rating: string;
     price: string;
     description: string;
@@ -129,14 +133,14 @@ const ProductInfo: FC<IProductInfo> = ({ product }) => {
       <div className="flex items-center gap-4">
         <div className="relative w-14 h-14">
           <Image
-            src={product.brandIcon}
+            src={product.brand.brandLogo}
             fill
             alt="Brand logo"
             className="object-contain"
           />
         </div>
       </div>
-      <h1 className="font-extrabold text-3xl">{product.title}</h1>
+      <h1 className="font-extrabold text-3xl">{product.name}</h1>
 
       <div>
 

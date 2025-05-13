@@ -4,8 +4,14 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import React, { useState } from "react";
-// import { Edit, Trash2 } from "lucide-react";
+import React, { useState, useEffect } from "react";
+import { Loader2 } from "lucide-react";
+import {
+  useGetAddressQuery,
+  useAddAddressMutation,
+  useUpdateAddressMutation,
+  useDeleteAddressMutation
+} from "@/redux/features/addresses/addressesApi";
 import {
   Select,
   SelectContent,
@@ -13,24 +19,40 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { toast, Toaster } from "sonner";
+
 
 interface Address {
-  id: string;
+  city: string;
+  country: string;
+  createdAt: string;
+  email: string;
   firstName: string;
   lastName: string;
-  phone: string;
-  email: string;
-  country: string;
-  city: string;
+  phoneNumber: string;
   state: string;
   streetAddress: string;
+  updatedAt: string;
+  user: string;
   zipCode: string;
+  _id: string;
+  __v: string;
 }
+
+//response structures
+interface AddressResponse {
+  status?: string;
+  data: {
+    data: { addresses?: Address[]; }
+  };
+  [key: string]: unknown
+}
+
 
 const validationSchema = Yup.object().shape({
   firstName: Yup.string().required("First name is required"),
   lastName: Yup.string().required("Last name is required"),
-  phone: Yup.string()
+  phoneNumber: Yup.string()
     .matches(/^[+]?[(]?[0-9]{1,4}[)]?[-\s./0-9]*$/, "Invalid phone number")
     .required("Phone is required"),
   email: Yup.string().email("Invalid email").required("Email is required"),
@@ -42,27 +64,35 @@ const validationSchema = Yup.object().shape({
 });
 
 const AddressPage = () => {
-  const [addresses, setAddresses] = useState<Address[]>([
-    {
-      id: "1",
-      firstName: "Tamer",
-      lastName: "Dlab",
-      phone: "+1234567890",
-      email: "tamer@example.com",
-      country: "US",
-      city: "New York",
-      state: "NY",
-      streetAddress: "123 Main St",
-      zipCode: "10001",
-    },
-  ]);
+  const { data: addressData, error, isLoading, refetch } = useGetAddressQuery<AddressResponse>();
+  const [addAddress, { isLoading: isAddingAddress, isSuccess: addSuccess, error: addError }] = useAddAddressMutation();
+  const [updateAddress, { isLoading: isUpdatingAddress, isSuccess: updateSuccess, error: updateError }] = useUpdateAddressMutation();
+  const [deleteAddress] = useDeleteAddressMutation();
   const [editingId, setEditingId] = useState<string | null>(null);
+
+  // Refetch addresses after successful addition or update
+  useEffect(() => {
+    if (addSuccess || updateSuccess) {
+      console.log("Address operation successful, refetching...");
+      refetch();
+    }
+  }, [addSuccess, updateSuccess, refetch]);
+
+  // Log errors
+  useEffect(() => {
+    if (addError) {
+      console.error("Error adding address:", addError);
+    }
+    if (updateError) {
+      console.error("Error updating address:", updateError);
+    }
+  }, [addError, updateError]);
 
   const formik = useFormik({
     initialValues: {
       firstName: "",
       lastName: "",
-      phone: "",
+      phoneNumber: "",
       email: "",
       country: "",
       city: "",
@@ -71,73 +101,130 @@ const AddressPage = () => {
       zipCode: "",
     },
     validationSchema,
-    onSubmit: (values, { resetForm }) => {
-      if (editingId) {
-        setAddresses((prev) =>
-          prev.map((address) =>
-            address.id === editingId ? { ...values, id: editingId } : address
-          )
-        );
-      } else {
-        setAddresses((prev) => [
-          ...prev,
-          { ...values, id: Date.now().toString() },
-        ]);
+    onSubmit: async (values, { resetForm }) => {
+      try {
+        console.log("Submitting address data:", values);
+
+        if (editingId) {
+          //update
+          const result = await updateAddress({
+            addressId: editingId,
+            body: values
+          }).unwrap();
+
+          console.log("Update address response:", result);
+          toast.message('Address updated successfully');
+        } else {
+          // Add new address
+          const result = await addAddress(values).unwrap();
+          console.log("Add address response:", result);
+          toast.message('Address added successfully');
+        }
+        setEditingId(null);
+        resetForm();
+      } catch (error) {
+        console.error("Failed to save address:", error);
+        toast.error('Failed to save address. Please try again.');
       }
-      setEditingId(null);
-      resetForm();
     },
   });
 
-  const handleEdit = (address: Address) => {
-    setEditingId(address.id);
-    formik.setValues(address);
+  const handleDelete = async (_id: string) => {
+    try {
+
+      await deleteAddress(_id).unwrap();
+      console.log('Delete address successfully');
+      toast.message('Address deleted successfully');
+      refetch();
+
+    } catch (error) {
+      console.log('Failed to delete address', error);
+      toast.error('Failed to delete address');
+    }
+  }
+
+  const handleEdit = async (address: Address) => {
+    setEditingId(address._id);
+    formik.setValues({
+      firstName: address.firstName,
+      lastName: address.lastName,
+      phoneNumber: address.phoneNumber,
+      email: address.email,
+      country: address.country,
+      city: address.city,
+      state: address.state,
+      streetAddress: address.streetAddress,
+      zipCode: address.zipCode,
+    });
   };
 
-  const handleDelete = (id: string) => {
-    setAddresses((prev) => prev.filter((address) => address.id !== id));
-  };
+  if (isLoading) {
+    return (
+      <div className="p-4">
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  if (error) {
+    console.error("Error fetching addresses:", error);
+    return (
+      <div className="p-4">
+        <p className="text-red-500">Something went wrong. Please try again later.</p>
+        <pre className="mt-4 p-2 bg-gray-100 rounded text-xs overflow-auto">
+          {JSON.stringify(error, null, 2)}
+        </pre>
+      </div>
+    );
+  }
 
   return (
-    <div className=" space-y-8">
+    <div className="space-y-8">
+      <Toaster />
       <h1 className="text-2xl font-bold">Saved Addresses</h1>
 
       {/* Existing Addresses */}
       <div className="space-y-4">
-        {addresses.map((address) => (
-          <div
-            key={address.id}
-            className="border p-4 rounded-lg flex justify-between items-center"
-          >
-            <div className="space-y-2">
-              <h3 className="font-medium">
-                {address.firstName} {address.lastName}
-              </h3>
-              <p className="text-sm text-gray-600">{address.streetAddress}</p>
-              <p className="text-sm text-gray-600">
-                {address.city}, {address.state} {address.zipCode}
-              </p>
-              <p className="text-sm text-gray-600">{address.phone}</p>
+        {addressData?.data?.addresses && addressData.data.addresses.length > 0 ? (
+          addressData.data.addresses.map((address: Address) => (
+            <div
+              key={address._id}
+              className="border p-4 rounded-lg flex justify-between items-center"
+            >
+              <div className="space-y-2">
+                <h3 className="font-medium">
+                  {address.firstName} {address.lastName}
+                </h3>
+                <p className="text-sm text-gray-600">{address.streetAddress}</p>
+                <p className="text-sm text-gray-600">
+                  {address.city}, {address.state} {address.zipCode}
+                </p>
+                <p className="text-sm text-gray-600">{address.phoneNumber}</p>
+              </div>
+              <div className="flex gap-2">
+                <Button
+                  variant="link"
+                  size="icon"
+                  onClick={() => handleEdit(address)}
+                >
+                  Edit
+                </Button>
+                <Button
+                  variant="link"
+                  size="icon"
+                  className="text-destructive"
+                  onClick={() => handleDelete(address._id)}
+                >
+                  Delete
+                </Button>
+              </div>
             </div>
-            <div className="flex gap-2">
-              <Button
-                variant="link"
-                size="icon"
-                onClick={() => handleEdit(address)}
-              >
-                Edit
-              </Button>
-              <Button
-                variant="link"
-                size="icon"
-                className="text-destructive"
-                onClick={() => handleDelete(address.id)}
-              >
-                Delete
-              </Button>
-            </div>
+          ))
+        ) : (
+          <div className="text-center py-8 text-gray-500">
+            No saved addresses found. Add your first address below.
           </div>
-        ))}
+        )}
       </div>
 
       {/* Add/Edit Address Form */}
@@ -185,14 +272,14 @@ const AddressPage = () => {
           <div className="space-y-2">
             <Label>Phone *</Label>
             <Input
-              name="phone"
+              name="phoneNumber"
               placeholder="Enter Phone Number"
-              value={formik.values.phone}
+              value={formik.values.phoneNumber}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
             />
-            {formik.touched.phone && formik.errors.phone && (
-              <p className="text-red-500 text-sm">{formik.errors.phone}</p>
+            {formik.touched.phoneNumber && formik.errors.phoneNumber && (
+              <p className="text-red-500 text-sm">{formik.errors.phoneNumber}</p>
             )}
           </div>
 
@@ -312,8 +399,19 @@ const AddressPage = () => {
         </div>
 
         <div className="flex flex-wrap gap-4">
-          <Button type="submit" className="w-[200px]">
-            {editingId ? "Update Address" : "Add Address"}
+          <Button
+            type="submit"
+            className="w-[200px]"
+            disabled={isAddingAddress || isUpdatingAddress}
+          >
+            {isAddingAddress || isUpdatingAddress ? (
+              <>
+                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                Saving...
+              </>
+            ) : (
+              editingId ? "Update Address" : "Add Address"
+            )}
           </Button>
           {editingId && (
             <Button

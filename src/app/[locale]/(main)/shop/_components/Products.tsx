@@ -16,7 +16,7 @@ interface IProducts {
 
 
 const Products: FC<IProducts> = ({  items }) => {
-
+console.log(items)
   return (
     <div className="space-y-6 flex flex-col gap-10">
       <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-4 gap-6">
