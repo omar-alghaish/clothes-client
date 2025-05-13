@@ -110,6 +110,13 @@ export const userApi = createApi({
             }),
             invalidatesTags: ['PaymentCard'],
         }),
+        changePassword: builder.mutation({
+            query: (body) => ({
+                url: '/users/changePassword',
+                method: 'PATCH',
+                body
+            })
+        })
     }),
 });
 
@@ -124,4 +131,5 @@ export const {
     useCreatePaymentCardMutation,
     useUpdatePaymentCardMutation,
     useDeletePaymentCardMutation,
+    useChangePasswordMutation
 } = userApi;
