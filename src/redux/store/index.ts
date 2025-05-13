@@ -8,6 +8,10 @@ import { cartApi } from "../features/cart/cartApi";
 import { userApi } from "../features/user/userApi";
 import { ordersApi } from "../features/orders/orders.api";
 import orderSlice from "../features/orders/orders.slice"
+import { aiApi } from "../features/ai/aiApi";
+import { favoritesApi } from "../features/favorites/favoritesApi";
+import { addressesApi } from "../features/addresses/addressesApi";
+import { paymentApi } from "../features/payment/paymentApi";
 export const store = configureStore({
   reducer: {
     order: orderSlice,
@@ -17,13 +21,19 @@ export const store = configureStore({
     [cartApi.reducerPath]: cartApi.reducer,
     [userApi.reducerPath]: userApi.reducer,
     [ordersApi.reducerPath]: ordersApi.reducer,
+    [aiApi.reducerPath]: aiApi.reducer,
+    [favoritesApi.reducerPath]: favoritesApi.reducer,
+    [addressesApi.reducerPath]: addressesApi.reducer,
+    [paymentApi.reducerPath]: paymentApi.reducer,
+
+
 
 
 
   },
   devTools: false,
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat(authApi.middleware, productsApi.middleware, cartApi.middleware, userApi.middleware, ordersApi.middleware),
+    getDefaultMiddleware().concat(authApi.middleware, productsApi.middleware, cartApi.middleware, userApi.middleware, ordersApi.middleware, aiApi.middleware, favoritesApi.middleware, addressesApi.middleware, paymentApi.middleware),
 });
 
 // Infer the `RootState` and `AppDispatch` types from the store itself

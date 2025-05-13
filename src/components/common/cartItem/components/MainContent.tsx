@@ -9,10 +9,13 @@ import Rating from "../Rating";
 import useAuthRedirect from "@/hooks/useAuthRedirect";
 import { useAddToCartMutation } from "@/redux/features/cart/cartApi";
 import { toast, Toaster } from "sonner";
+import { useAddFavProductMutation, useDeleteFavProductMutation } from "@/redux/features/favorites/favoritesApi";
+
 export interface CartitemProps {
   _id: string;
   img: string;
-  name: string;
+  name?: string;
+  title?:string;
   brand: {
     _id: string;
     brandName: string;
@@ -20,22 +23,32 @@ export interface CartitemProps {
   };
   price: string;
   rating: string;
+  isFavorite?: boolean;
 }
 
-const MainContent: FC<CartitemProps> = ({ img, name, price, rating, _id }) => {
+const MainContent: FC<CartitemProps> = ({ img, name, price, rating, _id, isFavorite = false }) => {
   const locale = useLocale();
   const checkAuth = useAuthRedirect();
   const [imgLoading, setImgLoading] = useState(true);
   const [brandImgLoading] = useState(true);
   const imgRef = useRef<HTMLImageElement>(null);
 
+  const [isFav, setIsFav] = useState(isFavorite);
   const [addToCart] = useAddToCartMutation();
-   useEffect(() => {
+  const [addFavProduct] = useAddFavProductMutation();
+  const [deleteFavProduct] = useDeleteFavProductMutation();
+
+  useEffect(() => {
     // Check if image is already cached
     if (imgRef.current?.complete) {
       setImgLoading(false);
     }
   }, []);
+
+  // Update isFav when isFavorite prop changes (helpful for list refreshes)
+  useEffect(() => {
+    setIsFav(isFavorite);
+  }, [isFavorite]);
 
   const handleAddToCart = (id: string) => {
     checkAuth(async () => {
@@ -52,10 +65,25 @@ const MainContent: FC<CartitemProps> = ({ img, name, price, rating, _id }) => {
       }
     });
   };
-  const handleLove = (id: string) => {
-    checkAuth(() => {
-      console.log("Action executed: User is authenticated!", id);
-      // Perform authenticated action
+
+  const handleLove = (itemId: string) => {
+    checkAuth(async () => {
+      try {
+        if (isFav) {
+          // Remove from favorites
+          await deleteFavProduct(itemId).unwrap();
+          setIsFav(false);
+          toast.success("Removed from favorites!");
+        } else {
+          // Add to favorites
+          await addFavProduct(itemId).unwrap();
+          setIsFav(true);
+          toast.success("Added to favorites!");
+        }
+      } catch (err: unknown) {
+        toast.error(isFav ? "Failed to remove from favorites" : "Failed to add to favorites");
+        console.error("Favorite operation error:", err);
+      }
     });
   };
 
@@ -92,21 +120,12 @@ const MainContent: FC<CartitemProps> = ({ img, name, price, rating, _id }) => {
           {brandImgLoading && (
             <div className="w-full h-full bg-gray-300 animate-pulse rounded-full"></div>
           )}
-          {/* {brand?.brandLogo && (
-            <Image
-              src={brand.brandLogo}
-              alt={`${name} brand logo`}
-              className={`object-contain ${brandImgLoading ? "hidden" : "block"}`}
-              layout="fill"
-              priority={true}
-              onLoad={() => setBrandImgLoading(false)}
-              onError={() => setBrandImgLoading(false)}
-            />
-          )} */}
+          {/* Brand logo rendering code commented out */}
         </div>
         <Heart
           onClick={() => handleLove(_id)}
-          className="text-gray-400 hover:text-red-500 cursor-pointer transition-colors w-4 h-4 md:w-5 md:h-5"
+          className={`cursor-pointer transition-colors w-4 h-4 md:w-5 md:h-5 ${isFav ? "text-red-500" : "text-gray-400 hover:text-red-500"
+            }`}
         />
       </div>
 
