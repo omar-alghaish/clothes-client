@@ -34,8 +34,8 @@ const ProductInfo: FC<IProductInfo> = ({ product }) => {
   const checkAuth = useAuthRedirect();
 
   const searchParams = useSearchParams();
-  const [activeColor, setActiveColor] = useState(product.colors[0]);
-  const [activeSize, setActiveSize] = useState(product.sizes[0]);
+  const [activeColor, setActiveColor] = useState(product?.colors[0]);
+  const [activeSize, setActiveSize] = useState(product?.sizes[0]);
   const [quantity, setQuantity] = useState(1);
   const [addToCart] = useAddToCartMutation();
 
