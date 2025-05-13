@@ -38,7 +38,7 @@ const ProductInfo: FC<IProductInfo> = ({ product }) => {
   const [activeSize, setActiveSize] = useState(product.sizes[0]);
   const [quantity, setQuantity] = useState(1);
   const [addToCart] = useAddToCartMutation();
-  
+
   const local = useLocale()
   useEffect(() => {
     // Get parameters from URL or use defaults
@@ -130,16 +130,21 @@ const ProductInfo: FC<IProductInfo> = ({ product }) => {
     <div className="space-y-6 sticky h-max top-0">
       {/* Brand logo and title */}
       <Toaster />
-      <div className="flex items-center gap-4">
-        <div className="relative w-14 h-14">
-          <Image
-            src={product.brand.brandLogo}
-            fill
-            alt="Brand logo"
-            className="object-contain"
-          />
+      {
+        product.brand.brandLogo ? <div className="flex items-center gap-4">
+          <div className="relative w-14 h-14">
+            <Image
+              src={product.brand.brandLogo}
+              fill
+              alt="Brand logo"
+              className="object-contain"
+            />
+          </div>
+        </div> : <div>
+          <h1>{product.brand.brandName}</h1>
         </div>
-      </div>
+      }
+
       <h1 className="font-extrabold text-3xl">{product.name}</h1>
 
       <div>
@@ -210,18 +215,18 @@ const ProductInfo: FC<IProductInfo> = ({ product }) => {
       <div className="space-y-2">
         <div className="font-semibold">Quantity:</div>
         <div className="flex items-center gap-3">
-          <Button 
-            variant="outline" 
-            size="icon" 
+          <Button
+            variant="outline"
+            size="icon"
             onClick={decrementQuantity}
             disabled={quantity <= 1}
           >
             -
           </Button>
           <span className="w-8 text-center">{quantity}</span>
-          <Button 
-            variant="outline" 
-            size="icon" 
+          <Button
+            variant="outline"
+            size="icon"
             onClick={incrementQuantity}
           >
             +
@@ -231,8 +236,8 @@ const ProductInfo: FC<IProductInfo> = ({ product }) => {
 
       {/* Add to cart button */}
       <div className="flex gap-2">
-        <Button 
-          variant="secondary" 
+        <Button
+          variant="secondary"
           className="flex-1 md:w-[200px] font-bold"
           onClick={() => handleAddToCart(product._id)}
         >
