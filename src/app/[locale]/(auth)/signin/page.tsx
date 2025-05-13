@@ -19,6 +19,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { signIn } from "next-auth/react"
 import { useDispatch } from "react-redux";
 import { setCredentials } from "@/redux/features/auth/authSlice";
+
 const validationSchema = Yup.object().shape({
   email: Yup.string().email("Invalid email").required("Email is required"),
   password: Yup.string().required("Password is required"),
@@ -77,65 +78,66 @@ const Login = () => {
   return (
     <div className="relative min-h-screen flex flex-col items-center justify-center">
       {/* Background */}
-      <div className="absolute z-[-1] top-0 left-0 h-[100%] w-[100vw]">
+      <div className="absolute z-[-1] top-0 left-0 h-full w-full">
         <Image
           className="w-full h-full object-cover"
           src={background.src}
           alt="Login Background"
           width={1000}
           height={1000}
+          priority
         />
       </div>
       <Toaster />
 
       {/* Form Container */}
-      <div className="relative z-10 flex items-center justify-center text-center text-white">
+      <div className="relative z-10 flex items-center justify-center text-center text-white w-full px-4 sm:px-6">
         <form
           onSubmit={formik.handleSubmit}
-          className="p-8 w-[600px] flex flex-col gap-2 rounded shadow-md max-w-[100%]"
+          className="p-4 sm:p-6 md:p-8 w-full max-w-md lg:max-w-lg flex flex-col gap-2 rounded shadow-md backdrop-blur-sm bg-black/30"
         >
           <div>
-            <h1 className="text-4xl font-extrabold mb-4">Log In</h1>
-            <p className="mb-6 text-2xl opacity-70">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold mb-2 sm:mb-4">Log In</h1>
+            <p className="mb-4 sm:mb-6 text-lg sm:text-xl md:text-2xl opacity-70">
               Access your account to continue
             </p>
           </div>
 
           {/* Email Input */}
-          <div className="mb-4 text-start">
+          <div className="mb-3 md:mb-4 text-start">
             <Input
               name="email"
               placeholder="Email"
-              icon={<Mail />}
+              icon={<Mail className="h-4 w-4 sm:h-5 sm:w-5" />}
               value={formik.values.email}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
               className="bg-transparent border-border/50"
             />
             {formik.touched.email && formik.errors.email && (
-              <div className="text-red-500 text-sm">{formik.errors.email}</div>
+              <div className="text-red-500 text-xs sm:text-sm">{formik.errors.email}</div>
             )}
           </div>
 
           {/* Password Input */}
-          <div className="mb-4 text-start">
+          <div className="mb-3 md:mb-4 text-start">
             <Input
               name="password"
               type="password"
               placeholder="Password"
-              icon={<Lock />}
+              icon={<Lock className="h-4 w-4 sm:h-5 sm:w-5" />}
               value={formik.values.password}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
               className="bg-transparent border-border/50"
             />
             {formik.touched.password && formik.errors.password && (
-              <div className="text-red-500 text-sm">{formik.errors.password}</div>
+              <div className="text-red-500 text-xs sm:text-sm">{formik.errors.password}</div>
             )}
           </div>
 
           {/* Remember Me and Forgot Password */}
-          <div className="flex justify-between items-center mb-4">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-3 md:mb-4 gap-2 sm:gap-0">
             <div className="flex items-center">
               <Checkbox
                 id="remember"
@@ -143,14 +145,14 @@ const Login = () => {
                 checked={rememberMe}
                 onCheckedChange={(checked) => setRememberMe(checked === true)}
               />
-              <label htmlFor="remember" className="ml-2 text-gray-400 cursor-pointer">
+              <label htmlFor="remember" className="ml-2 text-sm sm:text-base text-gray-400 cursor-pointer">
                 Remember me
               </label>
             </div>
             <div>
               <Link
                 href={`/${locale}/forget-password`}
-                className="text-gray-400"
+                className="text-sm sm:text-base text-gray-400"
               >
                 Forgot password?
               </Link>
@@ -160,27 +162,27 @@ const Login = () => {
           {/* Login Button */}
           <Button
             type="submit"
-            className="w-full mb-4 bg-secondary/20 font-extrabold text-lg"
+            className="w-full mb-3 md:mb-4 bg-secondary/20 font-bold sm:font-extrabold text-base sm:text-lg"
             disabled={isLoading}
           >
             {isLoading ? "Logging In..." : "Log In"}
           </Button>
 
-          <div className="flex items-center my-4">
+          <div className="flex items-center my-3 md:my-4">
             <Separator className="flex-1 opacity-50" />
-            <span className="mx-4 text-gray-500">or</span>
+            <span className="mx-2 sm:mx-4 text-sm sm:text-base text-gray-500">or</span>
             <Separator className="flex-1 opacity-50" />
           </div>
 
           {/* Social Login Options */}
-          <div className="flex items-center justify-center">
+          <div className="flex items-center justify-center gap-4">
             <Button
               type="button"
               variant="ghost"
               className="flex items-center justify-center w-max"
               onClick={() => signIn("google", { callbackUrl: "/" })}
             >
-              <FcGoogle size={20} />
+              <FcGoogle size={18} className="sm:h-5 sm:w-5" />
             </Button>
             <Button
               type="button"
@@ -188,12 +190,12 @@ const Login = () => {
               className="flex items-center justify-center w-max"
               onClick={() => console.log("Facebook Login")}
             >
-              <FaFacebookF color="#1877F2" size={20} />
+              <FaFacebookF color="#1877F2" size={18} className="sm:h-5 sm:w-5" />
             </Button>
           </div>
 
           {/* Signup Link */}
-          <div className="text-center text-secondary/30">
+          <div className="text-center text-sm sm:text-base text-secondary/30 mt-2">
             Don&apos;t have an account?{" "}
             <Link href={`/${locale}/signup`} className="text-white">
               Sign up
