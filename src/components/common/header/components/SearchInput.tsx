@@ -50,6 +50,7 @@ interface SearchResultsProps {
 
 interface DisplaySearchWithImgResultProps {
   results: CartitemProps[];
+  onClose: () => void;
 }
 
 const recently: string[] = ["Coats-Woman", "Skirts"];
@@ -105,6 +106,9 @@ const SearchInput: React.FC = () => {
 
       // Call the API endpoint
       const response = await searchByImg(formData).unwrap();
+
+
+      console.log("response", response);
       
       // Handle successful response
       console.log("Search results:", response);
@@ -145,7 +149,7 @@ const SearchInput: React.FC = () => {
   );
 };
 
-const DisplaySearchWithImgResult: React.FC<DisplaySearchWithImgResultProps> = ({ results }) => {
+const DisplaySearchWithImgResult: React.FC<DisplaySearchWithImgResultProps> = ({ results, onClose }) => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-6 gap-4">
       {results && results.length > 0 ? (
@@ -158,6 +162,8 @@ const DisplaySearchWithImgResult: React.FC<DisplaySearchWithImgResultProps> = ({
             name={item.title} 
             price={item.price} 
             rating={item.rating} 
+            isBrand={false}
+            onClick={onClose}
           />
         ))
       ) : (
@@ -172,6 +178,10 @@ const DisplaySearchWithImgResult: React.FC<DisplaySearchWithImgResultProps> = ({
 const ResultsDialog: React.FC<ResultsDialogProps> = ({ isOpen, setIsOpen, searchResults }) => {
   const { isMobile } = useViewport();
 
+  const handleClose = () => {
+    setIsOpen(false);
+  };
+
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogContent
@@ -179,7 +189,7 @@ const ResultsDialog: React.FC<ResultsDialogProps> = ({ isOpen, setIsOpen, search
         style={{
           width: isMobile ? "100%" : "80%",
           maxWidth: isMobile ? "100%" : "90vw",
-          maxHeight: "80vh",
+          maxHeight: "90vh",
           overflowY: "auto"
         }}
       >
@@ -188,7 +198,10 @@ const ResultsDialog: React.FC<ResultsDialogProps> = ({ isOpen, setIsOpen, search
         </DialogHeader>
         
         {searchResults && searchResults.length > 0 ? (
-          <DisplaySearchWithImgResult results={searchResults} />
+          <DisplaySearchWithImgResult 
+            results={searchResults} 
+            onClose={handleClose}
+          />
         ) : (
           <div className="text-center p-8">
             <p className="text-muted-foreground">No results found for your search</p>

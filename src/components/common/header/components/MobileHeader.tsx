@@ -10,6 +10,7 @@ import { ChangeLang } from "../../changeLang";
 import ThemeToggle from "../../toggleTheme";
 import SearchInput from "./SearchInput";
 import Link from "next/link";
+import { useIsUser } from "@/hooks/useIsUser";
 
 export const MobileHeader = () => {
   const locale = useLocale();
@@ -25,7 +26,7 @@ export const MobileHeader = () => {
       document.body.classList.remove("overflow-hidden");
     };
   }, [isMenuOpen]);
-  const user = true;
+  const user =  useIsUser();
   return (
     <div className="md:hidden flex justify-between items-center p-4 w-full">
       {/* Menu Button */}

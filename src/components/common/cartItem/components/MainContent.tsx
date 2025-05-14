@@ -16,6 +16,7 @@ export interface CartitemProps {
   img: string;
   name?: string;
   title?:string;
+  categoryField?:string;
   brand: {
     _id: string;
     brandName: string;
@@ -24,9 +25,11 @@ export interface CartitemProps {
   price: string;
   rating: string;
   isFavorite?: boolean;
+  onClick?: () => void;
+  isBrand?: boolean;
 }
 
-const MainContent: FC<CartitemProps> = ({ img, name, price, rating, _id, isFavorite = false }) => {
+const MainContent: FC<CartitemProps> = ({ img, name, price, rating, _id, isFavorite = false, onClick, isBrand = false, brand }) => {
   const locale = useLocale();
   const checkAuth = useAuthRedirect();
   const [imgLoading, setImgLoading] = useState(true);
@@ -90,7 +93,7 @@ const MainContent: FC<CartitemProps> = ({ img, name, price, rating, _id, isFavor
   return (
     <div className="group w-full max-w-[300px] md:max-w-[360px] lg:max-w-[400px] mx-auto">
       <Toaster />
-      <Link href={`/${locale}/${_id}`}>
+      <Link href={`/${locale}/${_id}`} onClick={onClick}>
         <div className="relative overflow-hidden rounded-lg aspect-[3/4]">
           {imgLoading && (
             <div className="w-full h-full bg-gray-300 animate-pulse"></div>
@@ -117,10 +120,18 @@ const MainContent: FC<CartitemProps> = ({ img, name, price, rating, _id, isFavor
 
       <div className="mt-3 flex justify-between items-center px-2 md:px-0 h-[20px]">
         <div className="relative w-8 h-8 md:w-7">
-          {brandImgLoading && (
+          {brandImgLoading && isBrand && (
             <div className="w-full h-full bg-gray-300 animate-pulse rounded-full"></div>
           )}
-          {/* Brand logo rendering code commented out */}
+          {isBrand && (
+            <Image
+              src={brand.brandLogo}
+              alt={brand.brandName}
+              className="w-full h-full object-cover rounded-full"
+              width={32}
+              height={32}
+            />
+          )}
         </div>
         <Heart
           onClick={() => handleLove(_id)}
