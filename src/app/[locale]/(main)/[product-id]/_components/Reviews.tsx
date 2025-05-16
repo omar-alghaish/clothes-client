@@ -1,35 +1,38 @@
+// ReviewList1.tsx (Wrapper Component)
 import React from "react";
 import RatingDisplay from "./Rating";
 import ReviewList, { ReviewProps } from "./ReviewsList";
+import { SerializedError } from "@reduxjs/toolkit";
+import { FetchBaseQueryError } from "@reduxjs/toolkit/query";
+import { format } from "date-fns";
 
-interface Review {
-  id: string;
-  user: string;
+interface ApiReview {
+  _id: string;
   comment: string;
-  color: string;
-  size: string;
-  date: string;
-  avatar?: string;
+  createdAt: string;
+  rating: number;
+  user: {
+    _id: string;
+    firstName: string;
+    lastName: string;
+    email: string;
+    avatarFile: string;
+  };
+  item: {
+    _id: string;
+    img: string;
+  };
 }
 
 interface ReviewListProps {
-  reviews: Review[];
+  reviews: ApiReview[] | undefined;
   showingText: string;
+  isLoading: boolean;
+  error: FetchBaseQueryError | SerializedError | undefined;
+  totalReviews: number;
 }
 
-const ratingData = {
-  averageRating: 4.8,
-  totalReviews: 107,
-  ratingCounts: {
-    5: 70, // Approximately 65% based on the progress bar
-    4: 35, // Approximately 33%
-    3: 15, // Approximately 14%
-    2: 7, // Approximately 7%
-    1: 2, // Approximately 2%
-  },
-};
-
-const reviewsData: ReviewProps[] = [
+const fallbackReviews: ReviewProps[] = [
   {
     id: "1",
     reviewer: {
@@ -71,31 +74,99 @@ const reviewsData: ReviewProps[] = [
   },
 ];
 
-const ReviewList1: React.FC<ReviewListProps> = ({ showingText }) => {
+const ReviewList1: React.FC<ReviewListProps> = ({
+  showingText,
+  reviews,
+  isLoading,
+  totalReviews,
+}) => {
+  const ratingData = React.useMemo(() => {
+    if (!reviews || reviews.length === 0) {
+      return {
+        averageRating: 0,
+        totalReviews: 0,
+        ratingCounts: {
+          5: 0,
+          4: 0,
+          3: 0,
+          2: 0,
+          1: 0,
+        },
+      };
+    }
+
+    const ratingCounts = {
+      5: 0,
+      4: 0,
+      3: 0,
+      2: 0,
+      1: 0,
+    };
+
+    const totalRating = reviews.reduce((sum, review) => {
+      const roundedRating = Math.round(review.rating);
+
+      if (roundedRating >= 1 && roundedRating <= 5) {
+        ratingCounts[roundedRating as keyof typeof ratingCounts] += 1;
+      }
+
+      return sum + review.rating;
+    }, 0);
+
+    const averageRating = reviews.length > 0 ? totalRating / reviews.length : 0;
+
+    return {
+      averageRating,
+      totalReviews: reviews.length,
+      ratingCounts,
+    };
+  }, [reviews]);
+
+  const transformedReviews: ReviewProps[] = React.useMemo(() => {
+    if (!reviews || reviews.length === 0) {
+      return [];
+    }
+
+    return reviews.map((review) => {
+      const formattedDate = review.createdAt
+        ? format(new Date(review.createdAt), "MM/dd/yyyy")
+        : "N/A";
+
+      return {
+        id: review._id,
+        reviewer: {
+          name: `${review.user.firstName} ${review.user.lastName}`,
+          avatar: review.user.avatarFile
+            ? `/avatars/${review.user.avatarFile}`
+            : null,
+        },
+        rating: review.rating,
+        date: formattedDate,
+        content: review.comment,
+      };
+    });
+  }, [reviews]);
+
+  const reviewsToShow = transformedReviews.length > 0
+    ? transformedReviews
+    : (!isLoading && !reviews) ? fallbackReviews : [];
+
   return (
     <div className="space-y-6">
       <h3 className="text-xl font-semibold text-gray-800">
         Review List ({showingText})
       </h3>
+
       <RatingDisplay
-        averageRating={ratingData.averageRating}
-        totalReviews={ratingData.totalReviews}
-        ratingCounts={ratingData.ratingCounts}
-      />
-      <ReviewList
-        reviews={reviewsData}
-        totalReviews={24}
-        className=" mx-auto"
+        ratingData={ratingData}
       />
 
-      {/* <ReviewForm
-        colors={[]}
-        sizes={[]}
-        productDetails={{
-          color: "",
-          size: "",
-        }}
-      /> */}
+      <ReviewList
+        reviews={reviewsToShow}
+        totalReviews={totalReviews || reviewsToShow.length}
+        className="mx-auto"
+        isLoading={isLoading}
+      />
     </div>
   );
 };

@@ -8,7 +8,7 @@ export default async function RootLayout({
   children: ReactNode;
 }>) {
   return (
-    <div>
+    <div className="min-h-screen flex flex-col justify-between">
       <Header />
       <div>{children}</div>
       <BootIcon />
