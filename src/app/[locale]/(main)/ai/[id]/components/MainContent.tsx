@@ -58,7 +58,7 @@ export default function MainContent() {
             const formData = new FormData();
             formData.append('person_image', uploadedImage);
             // Convert number to string
-            formData.append('num_inference_steps', '50');
+            formData.append('num_inference_steps', '5');
             formData.append('cloth_url', product.img);
             formData.append('cloth_type', product.clothingType);
             
