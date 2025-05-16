@@ -3,12 +3,8 @@ import ResultTryOn from "./ResultTryOn"
 
 // Import or define the interfaces
 interface TryOnResponse {
-    success: boolean;
-    data?: {
-        result_image: string;
-        // Add other response properties as needed
-    };
-    message?: string;
+    image_url: string;
+
 }
 
 interface Product {
@@ -30,7 +26,7 @@ export default function ResultDialog({ isOpen, onClose, resultData, product }: R
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
             <DialogContent className="min-w-[100vw] min-h-[100vh]">
-                <ResultTryOn image={resultData?.data?.result_image || ''} product={product as Product} />
+                <ResultTryOn image={resultData?.image_url || ''} product={product as Product} />
             </DialogContent>
         </Dialog>
     )

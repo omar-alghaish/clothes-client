@@ -11,12 +11,12 @@ import { Button } from "@/components/ui/button";
 
 // Add interface for the try-on response
 interface TryOnResponse {
-    success: boolean;
-    data?: {
-        result_image: string;
-        // Add other response properties as needed
-    };
-    message?: string;
+
+    image_url: string;
+        success: boolean;
+
+  
+
 }
 
 // Update Product interface
@@ -58,7 +58,7 @@ export default function MainContent() {
             const formData = new FormData();
             formData.append('person_image', uploadedImage);
             // Convert number to string
-            formData.append('num_inference_steps', '50');
+            formData.append('num_inference_steps', '1');
             formData.append('cloth_url', product.img);
             formData.append('cloth_type', product.clothingType);
             
@@ -67,9 +67,9 @@ export default function MainContent() {
             console.log(response);
             
             // Set the result data from the response
-            if (response && response.success) {
+            if (response) {
                 setResultData(response);
-                setDialogOpen(true); // Open dialog on success
+                setDialogOpen(true); // Op
             }
         } catch (error) {
             console.error("Try-on process failed:", error);
@@ -78,7 +78,7 @@ export default function MainContent() {
             setIsProcessing(false);
         }
     };
-
+    console.log(resultData);
     return (
         <div className="flex flex-col gap-8 pb-10">
             <HeaderSec />
