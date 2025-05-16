@@ -31,7 +31,7 @@ const UpdatedSection2 = () => {
                         key={index}
                         href={`/shop?brand=${encodeURIComponent(item.name)}`}
                     >
-                        <div className="w-16 md:w-24 lg:w-28 cursor-pointer">
+                        <div className="w-z md:w-24 lg:w-28 cursor-pointer">
                             <Image
                                 className="w-full h-auto object-contain grayscale-0 hover:grayscale transition-all duration-300"
                                 src={item.icon.src}

@@ -11,6 +11,7 @@ interface FavoritesResponse {
             price: string;
             rating: string;
             images: string[];
+            img: string;
             brand: {
                 _id: string;
                 brandName: string;
