@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import ScrollAreaSec from './ScrollAreaSec';
 import { Button } from "@/components/ui/button";
 import { useParams } from "next/navigation";
+import Image from "next/image"; // Import Next.js Image component
 import { useAddToCartMutation } from "@/redux/features/cart/cartApi";
 import { 
   useAddFavProductMutation, 
@@ -38,8 +39,11 @@ export default function Content({ image, product }: ContentProps) {
     const [selectedTop, ] = useState(null);
     const [selectedBottom, ] = useState(null);
     const [isFav, setIsFav] = useState(false);
+    const [imageError, setImageError] = useState(false);
     
     const checkAuth = useAuthRedirect();
+
+    console.log("image url in Content:", image);
 
     // Check if product is in favorites when component mounts or favorites data changes
     useEffect(() => {
@@ -106,18 +110,43 @@ export default function Content({ image, product }: ContentProps) {
 
     const isFavLoading = isAddFavLoading || isDeleteFavLoading;
 
+    // Fallback to a placeholder if image loading fails
+    const handleImageError = () => {
+        console.error("Failed to load image:", image);
+        setImageError(true);
+    };
+
     return (
         <div className="mt-10 flex flex-col md:flex-row p-4 space-y-10 md:space-y-0 md:space-x-6 lg:space-x-10 lg:p-6">
             {/* Product Section */}
             <div className="flex flex-col space-y-3 items-start w-full md:w-1/2 lg:w-1/3 lg:items-center">
                 {/* Product image */}
                 <div className="w-full rounded-md overflow-hidden flex justify-center" style={{ maxHeight: '650px' }}>
-                    <img
-                        src={image}
-                        alt={product?.name || "Product image"}
-                        className="object-contain w-full h-auto max-h-[650px]"
-                        style={{ aspectRatio: 'auto' }}
-                    />
+                    {imageError ? (
+                        // Fallback placeholder
+                        <div className="bg-gray-200 w-full h-[650px] flex items-center justify-center text-gray-500">
+                            Image unavailable
+                        </div>
+                    ) : image ? (
+                        // Try to use Next.js Image component when possible
+                        <div className="relative w-full h-[650px]">
+                            {/* Fallback to img tag if Next Image doesn't work */}
+                            <Image
+                                src={image}
+                                alt={product?.name || "Product image"}
+                                width={650}
+                                height={650}
+                                className="object-contain w-full h-full"
+                                onError={handleImageError}
+                                crossOrigin="anonymous" // Try with CORS attributes
+                            />
+                        </div>
+                    ) : (
+                        // No image provided
+                        <div className="bg-gray-100 w-full h-[450px] flex items-center justify-center text-gray-400">
+                            No image available
+                        </div>
+                    )}
                 </div>
 
                 {/* Action buttons */}

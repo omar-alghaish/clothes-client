@@ -1,5 +1,6 @@
 import HeaderSec from './HeaderSec'
-import Content from './Content' 
+import Content from './Content'
+import { useEffect } from 'react'
 
 interface Product {
     img: string;
@@ -9,6 +10,16 @@ interface Product {
 }
 
 export default function ResultTryOn({image, product}: {image: string, product: Product}) {
+    console.log("ResultTryOn - image URL:", image);
+    
+    // Pre-load the image to ensure it's cached
+    useEffect(() => {
+        if (image) {
+            const preloadImage = new Image();
+            preloadImage.src = image;
+        }
+    }, [image]);
+    
     return (
         <div>
             <HeaderSec />
