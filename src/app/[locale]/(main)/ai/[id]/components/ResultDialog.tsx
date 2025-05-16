@@ -30,9 +30,7 @@ export default function ResultDialog({ isOpen, onClose, resultData, product }: R
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
             <DialogContent className="min-w-[100vw] min-h-[100vh]">
-                {resultData?.data?.result_image && product && (
-                    <ResultTryOn image={resultData.data.result_image} product={product} />
-                )}
+                <ResultTryOn image={resultData?.data?.result_image || ''} product={product as Product} />
             </DialogContent>
         </Dialog>
     )
