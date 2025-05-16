@@ -1,7 +1,8 @@
-import MainContent from "./screen3/components/MainContent"
+// import MainContent from "./[id]/components/ResultTryOn"
 
 export default function Page() {
     return (
-        <MainContent />
+        <div></div>
+        // <MainContent />
     )
 }

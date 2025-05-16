@@ -1,4 +1,4 @@
-// ReviewList.tsx
+// ReviewList.tsx (Updated)
 import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import {
@@ -9,7 +9,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Star as StarFilledIcon, StarIcon } from "lucide-react";
-import Avatar from "@/components/ui/Avatar"; // Import your custom Avatar component
+import Avatar from "@/components/ui/Avatar";
 
 export interface ReviewProps {
   id: string;
@@ -19,8 +19,8 @@ export interface ReviewProps {
   };
   rating: number;
   date: string;
-  color: string;
-  size: string;
+  color?: string;
+  size?: string;
   content: string;
 }
 
@@ -28,12 +28,14 @@ interface ReviewListProps {
   reviews: ReviewProps[];
   totalReviews?: number;
   className?: string;
+  isLoading?: boolean;
 }
 
 const ReviewList: React.FC<ReviewListProps> = ({
-  reviews,
+  reviews = [],
   totalReviews = 0,
   className = "",
+  isLoading = false,
 }) => {
   const [sortBy, setSortBy] = React.useState("newest");
   const displayedReviews = reviews.slice(0, 4);
@@ -42,17 +44,33 @@ const ReviewList: React.FC<ReviewListProps> = ({
   // Function to render stars based on rating
   const renderStars = (rating: number) => {
     const stars = [];
+    // Handle half stars by rounding to nearest 0.5
+    const roundedRating = Math.round(rating * 2) / 2;
+    
     for (let i = 1; i <= 5; i++) {
-      stars.push(
-        i <= rating ? (
-          <StarFilledIcon key={i} className="w-4 h-4 text-yellow-400" />
-        ) : (
+      // For full stars
+      if (i <= Math.floor(roundedRating)) {
+        stars.push(
+          <StarFilledIcon key={i} className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+        );
+      } 
+      // For empty stars
+      else {
+        stars.push(
           <StarIcon key={i} className="w-4 h-4 text-yellow-400" />
-        ),
-      );
+        );
+      }
     }
     return stars;
   };
+
+  if (isLoading) {
+    return <div className="text-center py-8">Loading reviews...</div>;
+  }
+
+  if (reviews.length === 0) {
+    return <div className="text-center py-8">No reviews yet</div>;
+  }
 
   return (
     <div className={`w-full ${className}`}>
@@ -85,7 +103,6 @@ const ReviewList: React.FC<ReviewListProps> = ({
           <Card key={review.id} className="overflow-hidden">
             <CardContent className="p-4">
               <div className="flex items-start gap-3">
-                {/* Using your custom Avatar component */}
                 <Avatar
                   src={review.reviewer.avatar}
                   alt={review.reviewer.name}
@@ -97,9 +114,13 @@ const ReviewList: React.FC<ReviewListProps> = ({
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between">
                     <div>
                       <h3 className="font-semibold">{review.reviewer.name}</h3>
-                      <p className="text-sm text-gray-500">
-                        Color: {review.color} / Size: {review.size}
-                      </p>
+                      {(review.color || review.size) && (
+                        <p className="text-sm text-gray-500">
+                          {review.color && `Color: ${review.color}`} 
+                          {review.color && review.size && " / "} 
+                          {review.size && `Size: ${review.size}`}
+                        </p>
+                      )}
                     </div>
 
                     <div className="flex flex-col sm:items-end mt-1 sm:mt-0">

@@ -1,20 +1,12 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
-export const aiApi = createApi({
-  reducerPath: 'aiApi',
+export const aiApi2 = createApi({
+  reducerPath: 'aiApi2',
   baseQuery: fetchBaseQuery({ 
-    baseUrl: 'https://lately-humane-swan.ngrok-free.app',
+    baseUrl: 'https://seriously-moved-husky.ngrok-free.app',
   }),
   tagTypes: ['Ai'],
   endpoints: (builder) => ({
-    searchByImg: builder.mutation({
-      query: (data) => ({
-        url: '/retrieve',
-        method: 'POST',
-        body: data,
-      }),
-      invalidatesTags: ['Ai'],
-    }),
     tryOn: builder.mutation({
       query: (data) => ({
         url: '/try-on',
@@ -29,5 +21,5 @@ export const aiApi = createApi({
 });
 
 export const { 
-useSearchByImgMutation
-} = aiApi;
+useTryOnMutation
+} = aiApi2;

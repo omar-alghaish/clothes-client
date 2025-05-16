@@ -3,16 +3,14 @@
 import { CartItem } from '@/components/common'
 import React from 'react'
 import { useGetFavProductQuery } from '@/redux/features/favorites/favoritesApi';
-import { Loader2 } from "lucide-react";
+import Loading from '@/app/[locale]/loading';
 
 const FavoritesList = () => {
   const { isLoading, data: favoriteItems, error } = useGetFavProductQuery();
 
   if (isLoading) {
     return (
-      <div className="flex justify-center items-center h-64">
-        <Loader2 className="w-8 h-8 animate-spin text-primary" />
-      </div>
+        <Loading />
     );
   }
 
@@ -35,8 +33,8 @@ const FavoritesList = () => {
       <h1 className="text-2xl font-bold mb-6">Your Favorites</h1>
 
       {!hasFavorites && (
-        <div className="text-center py-10">
-          <p className="text-gray-500">You haven &apos; t added any favorites yet.</p>
+        <div className="text-center py-10 flex-1">
+          <p className="text-gray-800 text-2xl">You haven &apos; t added any favorites yet.</p>
         </div>
       )}
 
