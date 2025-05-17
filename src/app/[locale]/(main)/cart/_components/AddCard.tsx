@@ -27,8 +27,8 @@ const validationSchema = Yup.object().shape({
 });
 
 const AddCard = ({ onSuccess }: { onSuccess: (newCardId: string) => void }) => {
-  const [addPaymentCard] = useAddPaymentCardMutation();
-
+  const [addPaymentCard, {error}] = useAddPaymentCardMutation();
+console.log(error);
   const formik = useFormik<Omit<IPaymentCard, "_id">>({
     initialValues: {
       cardHolderName: "",
