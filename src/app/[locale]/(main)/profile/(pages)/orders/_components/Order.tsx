@@ -1,74 +1,121 @@
-import React, { FC } from "react";
-import OrderItem, { IOrderItem } from "./OrderItem";
-import { Separator } from "@/components/ui/separator";
-import { Button } from "@/components/ui/button";
-import Image from "next/image";
-import background from "../../../../../../../assets/backgrounds/b5.jpg";
+'use client';
+
+import React, { FC, useState, useEffect } from 'react';
+import Image from 'next/image';
+import { toast, Toaster } from 'sonner';
+
+import OrderItem, { ItemData } from './OrderItem';
+import { Separator } from '@/components/ui/separator';
+import { Button } from '@/components/ui/button';
+import background from '../../../../../../../assets/backgrounds/b5.jpg';
+import { useCancelOrderMutation } from '@/redux/features/profileOrders/statusApi';
+
+
+
 
 export interface IOrder {
-  id: string;
-  method: string;
-  total: string;
-  date: string;
-  items: IOrderItem[];
+  _id: string;
+  paymentMethod:string;
+  totalPrice: string;
+  estimatedDate: string;
+  status: string;
+  items: ItemData[];
 }
+
 export interface IOrderProps {
   order: IOrder;
 }
-const Order: FC<IOrderProps> = ({ order }) => {
-  return (
-    <div className="border rounded-md ">
-      <div className="relative">
-        <div className="w-full h-[300px] md:h-[150px]">
-          <Image
-            src={background.src}
-            className="w-full h-full object-cover"
-            width={1000}
-            height={1000}
-            alt="backgroudn"
-          />
-        </div>
-        <div className="top-1/2  transform translate-y-[-50%] gap-4  absolute flex flex-wrap justify-between w-full px-4 lg:px-14">
-          <div className="min-w-[150px]">
-            <p className="text-gray-600 text-xl">Order ID</p>
-            <h1 className="text-2xl font-extrabold">{order.id}</h1>
-          </div>
-          <div className="min-w-[150px]">
-            <p className="text-gray-600 text-xl">Payment Method</p>
-            <h1 className="text-2xl font-extrabold">{order.method}</h1>
-          </div>
-          <div className="min-w-[150px]">
-            <p className="text-gray-600 text-xl">Total Payment</p>
-            <h1 className="text-2xl font-extrabold">{order.total}</h1>
-          </div>
-          <div className="min-w-[150px]">
-            <p className="text-gray-600 text-xl">Estimated Delivery Date</p>
-            <h1 className="text-2xl font-extrabold">{order.date}</h1>
-          </div>
-        </div>
-      </div>
 
-      <div className="flex flex-col gap-6 p-6">
-        {order.items.map((item, index) => (
-          <div className="space-y-6" key={index}>
-            <OrderItem
-              img={item.img}
-              title={item.title}
-              color={item.color}
-              size={item.size}
-              brandIcon={item.brandIcon}
+const Order: FC<IOrderProps> = ({ order }) => {
+  const [cancelOrder, { isLoading, isSuccess }] = useCancelOrderMutation();
+  const [isCancelled, setIsCancelled] = useState(
+    order.status?.toLowerCase() === 'cancelled'
+  );
+  console.log(order);
+  
+  useEffect(() => {
+    if (isSuccess) {
+      setIsCancelled(true);
+    }
+  }, [isSuccess]);
+
+  const handleCancelOrder = async () => {
+    try {
+      await cancelOrder(order._id).unwrap();
+    } catch (error) {
+      console.error('Failed to cancel order:', error);
+      toast.error('Failed to cancel order');
+    }
+  };
+
+  const statusTextColor = order.status?.toLowerCase() === 'cancelled' ? 'text-red-500' : '';
+
+
+
+  return (
+    <>
+      <Toaster />
+      <div className="border rounded-md">
+        {/* Banner Section */}
+        <div className="relative">
+          <div className="w-full h-[300px] md:h-[150px]">
+            <Image
+              src={background.src}
+              alt="background"
+              width={1000}
+              height={1000}
+              className="w-full h-full object-cover"
             />
-            <Separator />
           </div>
-        ))}
-        <div className="flex justify-between">
-          <Button>Track order</Button>
-          <Button variant="link" className="text-destructive">
-            Cancel Order
-          </Button>
+          <div className="absolute top-1/2 transform -translate-y-1/2 flex flex-wrap justify-between w-full px-4 lg:px-14 gap-4">
+            {[
+              { label: 'Order ID', value: order._id.slice(0, 6) },
+              { label: 'Payment Method', value: order.paymentMethod || "cash" },
+              { label: 'Total Payment', value: order.totalPrice },
+              { label: 'Estimated Delivery Date', value: order.estimatedDate.slice(0, 10) },
+              {
+                label: 'Status',
+                value: order.status || 'N/A',
+                className: statusTextColor,
+              },
+            ].map((item, index) => (
+              <div key={index} className="min-w-[150px]">
+                <p className="text-gray-600 text-xl">{item.label}</p>
+                <h1 className={`text-lg font-extrabold ${item.className || ''}`}>
+                  {item.value}
+                </h1>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Items & Action Section */}
+        <div className="flex flex-col gap-6 p-6">
+          {order.items.map((item) => (
+            <div key={item._id} className="space-y-6">
+              <OrderItem {...item} />
+              <Separator />
+            </div>
+          ))}
+
+          <div className="flex justify-between">
+            <Button>Track order</Button>
+            <Button
+              variant="link"
+              className="text-destructive"
+              onClick={handleCancelOrder}
+              disabled={isLoading || isCancelled}
+            >
+              {isLoading
+                ? 'Cancelling...'
+                : isCancelled
+                  ? 'Order Cancelled'
+                  : 'Cancel Order'}
+            </Button>
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 

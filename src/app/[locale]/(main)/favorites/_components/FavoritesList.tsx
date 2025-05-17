@@ -42,7 +42,7 @@ const FavoritesList = () => {
         {hasFavorites && favorites.map((item) => (
           <CartItem
             key={item._id}
-            img={item.images[0]}
+            img={item.img}
             name={item.name}
             brand={item.brand}
             price={item.price}

@@ -21,6 +21,7 @@ export interface IPaymentCard {
     cardNumber: string;
     expirationDate: string;
     cvv: string;
+    methodName:string
 }
 
 interface RootState {

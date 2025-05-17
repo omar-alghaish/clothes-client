@@ -1,38 +1,49 @@
 import Image from "next/image";
 import React, { FC } from "react";
 
-export interface IOrderItem {
-  img: string;
-  title: string;
+export interface ItemData {
+  _id: string;
   color: string;
   size: string;
-  brandIcon: string;
+  product: {
+    name: string;
+    img: string;
+  };
+  brand: {
+    brandLogo: string;
+  };
 }
-const OrderItem: FC<IOrderItem> = ({ img, title, color, size, brandIcon }) => {
+
+
+
+const OrderItem: FC<ItemData> = ({ color, size, brand, product }) => {
+  // Destructure the first item in each tuple/array
+
+
   return (
     <div className="flex gap-4">
       <div className="h-[150px] w-[130px]">
         <Image
           className="object-cover w-full h-full rounded-md"
-          src={img}
+          src={product?.img}
           width={1000}
           height={1000}
-          alt={`${title}`}
+          alt="product image"
         />
       </div>
-      <div className="space-y-2 ">
-        <h1 className="font-extrabold text-xl">{title}</h1>
+      <div className="space-y-2">
+        <h1 className="font-extrabold text-xl">{product?.name}</h1>
         <p className="text-foreground/50 text-lg font-bold">Color: {color}</p>
-        <p className="text-foreground/50 text-lg font-bold">Size:  {size}</p>
+        <p className="text-foreground/50 text-lg font-bold">Size: {size}</p>
         <p className="flex gap-2 items-center text-foreground/50 text-lg font-bold">
-          Brand:{" "}
-          <div className=" h-[15px] ">
-            <Image
-              className="object-cover w-full h-full rounded-md"
-              src={brandIcon}
+          Brand:
+          <div className="h-[15px] w-[100px]">
+            <img
+              className="object-cover h-full rounded-md"
+              src={brand?.brandLogo}
               width={1000}
               height={1000}
-              alt={`${title}`}
+              alt="brand logo"
             />
           </div>
         </p>

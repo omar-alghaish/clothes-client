@@ -1,8 +1,6 @@
 "use client"
 import React from "react";
 import Order, { IOrder } from "./_components/Order";
-import img from "../../../../../../assets/images/i16.jpg";
-import brandIcon from "../../../../../../assets/brandIcons/hm.png";
 import {
   Select,
   SelectTrigger,
@@ -10,82 +8,26 @@ import {
   SelectContent,
   SelectItem,
 } from "@/components/ui/select";
+import { useGetOrdersQuery } from "@/redux/features/profileOrders/profileOrdersApi";
 
-const orders: IOrder[] = [
-  {
-    id: "ORD-001",
-    method: "Credit Card",
-    total: "150.00",
-    date: "2024-03-15",
-    items: [
-      {
-        img: img.src,
-        title: "Summer Dress",
-        color: "Red",
-        size: "M",
-        brandIcon: brandIcon.src,
-      },
-      {
-        img: img.src,
-        title: "Denim Jacket",
-        color: "Blue",
-        size: "L",
-        brandIcon: brandIcon.src,
-      },
-    ],
-  },
-  {
-    id: "ORD-002",
-    method: "PayPal",
-    total: "89.99",
-    date: "2024-03-10",
-    items: [
-      {
-        img: img.src,
-        title: "Slim Fit Jeans",
-        color: "Black",
-        size: "32",
-        brandIcon: brandIcon.src,
-      },
-    ],
-  },
-  {
-    id: "ORD-003",
-    method: "Apple Pay",
-    total: "210.50",
-    date: "2024-03-18",
-    items: [
-      {
-        img: img.src,
-        title: "Winter Coat",
-        color: "Navy",
-        size: "XL",
-        brandIcon: brandIcon.src,
-      },
-      {
-        img: img.src,
-        title: "Wool Scarf",
-        color: "Gray",
-        size: "One Size",
-        brandIcon: brandIcon.src,
-      },
-    ],
-  },
-];
 
 const Page = () => {
+  const { data: ordersData } = useGetOrdersQuery();
+  console.log(ordersData);
+
+  const orders: IOrder[] = Array.isArray(ordersData?.data) ? ordersData.data : [];
   const [sortBy, setSortBy] = React.useState<"date-desc" | "date-asc" | "total-desc" | "total-asc">("date-desc");
 
   const sortedOrders = [...orders].sort((a, b) => {
     switch (sortBy) {
       case "date-desc":
-        return new Date(b.date).getTime() - new Date(a.date).getTime();
+        return new Date(b.estimatedDate).getTime() - new Date(a.estimatedDate).getTime();
       case "date-asc":
-        return new Date(a.date).getTime() - new Date(b.date).getTime();
+        return new Date(a.estimatedDate).getTime() - new Date(b.estimatedDate).getTime();
       case "total-desc":
-        return parseFloat(b.total) - parseFloat(a.total);
+        return parseFloat(b.totalPrice) - parseFloat(a.totalPrice);
       case "total-asc":
-        return parseFloat(a.total) - parseFloat(b.total);
+        return parseFloat(a.totalPrice) - parseFloat(b.totalPrice);
       default:
         return 0;
     }
@@ -113,7 +55,7 @@ const Page = () => {
 
       <div className="space-y-6">
         {sortedOrders.map((order) => (
-          <Order order={order} key={order.id} />
+          <Order order={order} key={order._id} />
         ))}
       </div>
     </div>

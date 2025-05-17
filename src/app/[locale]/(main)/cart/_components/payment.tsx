@@ -7,8 +7,10 @@ import paypal from "../../../../../assets/icons/paypal.png";
 import masterCard from "../../../../../assets/icons/master card.png";
 
 interface IPayment {
-  type?: "google-pay" | "mastercard" | "visa" | "paypal" | "credit-card" | "cash";
+  type?: "google-pay" | "mastercard" | "visa" | "paypal" | "cash";
   cardNumber?: string;
+  methodName?: string;
+  onTypeDetected?: (type: string) => void;
 }
 
 const paymentIcons: Record<string, string> = {
@@ -16,7 +18,6 @@ const paymentIcons: Record<string, string> = {
   "mastercard": masterCard.src,
   "visa": visa.src,
   "paypal": paypal.src,
-  "credit-card": visa.src,
 };
 
 const getCardType = (cardNumber: string): IPayment["type"] => {
@@ -33,24 +34,20 @@ const getCardType = (cardNumber: string): IPayment["type"] => {
     return 'mastercard';
   }
   
-  // American Express - starts with 34 or 37
-  if (/^3[47]/.test(cleaned)) {
-    return 'credit-card';
-  }
-  
-  // Discover - starts with 6011, 622126-622925, 644-649, or 65
-  if (/^(6011|622(12[6-9]|1[3-9]|[2-8]|9[0-1][0-9]|92[0-5])|64[4-9]|65)/.test(cleaned)) {
-    return 'credit-card';
-  }
-  
-  // Default fallback
-  return 'credit-card';
+return 'visa'
 };
 
-const Payment: FC<IPayment> = ({ type, cardNumber }) => {
+const Payment: FC<IPayment> = ({ type, cardNumber, onTypeDetected }) => {
   // First use explicitly provided type, then detect from card number
   const detectedType = type || (cardNumber ? getCardType(cardNumber) : 'credit-card');
   
+  // Call onTypeDetected when type is detected
+  React.useEffect(() => {
+    if (onTypeDetected && detectedType) {
+      onTypeDetected(detectedType);
+    }
+  }, [detectedType]);
+
   // Format display number correctly
   const displayNumber = cardNumber ? 
     `**** **** **** ${cardNumber.replace(/\D/g, '').slice(-4)}` : 
