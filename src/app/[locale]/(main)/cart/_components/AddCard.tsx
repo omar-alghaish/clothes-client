@@ -1,4 +1,3 @@
-
 "use client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -34,14 +33,17 @@ console.log(error);
       cardHolderName: "",
       cardNumber: "",
       expirationDate: "",
+      methodName: "",
       cvv: "",
     },
     validationSchema,
     onSubmit: async (values, { resetForm, setSubmitting }) => {
       try {
+        console.log(values);
         const processedValues = {
           ...values,
           cardNumber: values.cardNumber.replace(/ /g, ''),
+          
         };
         const result = await addPaymentCard(processedValues).unwrap();
         toast.success("Payment card added successfully");
@@ -69,6 +71,10 @@ console.log(error);
       .replace(/\D/g, '')
       .replace(/^(\d{2})(\d{0,2})/, '$1/$2')
       .substring(0, 5);
+  };
+
+  const handlePaymentTypeDetected = (type: string) => {
+    formik.setFieldValue('methodName', type);
   };
 
   return (
@@ -111,7 +117,11 @@ console.log(error);
           )}
           {formik.values.cardNumber && (
             <div className="mt-2">
-              <Payment cardNumber={formik.values.cardNumber} />
+              <Payment 
+                cardNumber={formik.values.cardNumber} 
+                methodName={formik.values.methodName}
+                onTypeDetected={handlePaymentTypeDetected}
+              />
             </div>
           )}
         </div>

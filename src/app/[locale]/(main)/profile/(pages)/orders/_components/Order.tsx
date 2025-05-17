@@ -70,7 +70,7 @@ const Order: FC<IOrderProps> = ({ order }) => {
           <div className="absolute top-1/2 transform -translate-y-1/2 flex flex-wrap justify-between w-full px-4 lg:px-14 gap-4">
             {[
               { label: 'Order ID', value: order._id.slice(0, 6) },
-              { label: 'Payment Method', value: order.paymentMethod },
+              { label: 'Payment Method', value: order.paymentMethod || "cash" },
               { label: 'Total Payment', value: order.totalPrice },
               { label: 'Estimated Delivery Date', value: order.estimatedDate.slice(0, 10) },
               {

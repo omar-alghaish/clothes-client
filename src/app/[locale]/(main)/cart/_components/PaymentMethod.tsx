@@ -22,7 +22,7 @@ const PaymentMethod = () => {
 
   const handleCashSelection = () => {
     setSelectedPayment("cash");
-    dispatch(setPaymentId("0"));
+    dispatch(setPaymentId(""));
     setShowAddCard(false);
   };
 
@@ -81,7 +81,7 @@ const PaymentMethod = () => {
                 className="h-5 w-5 text-primary focus:ring-primary"
               />
               <Payment
-                type={payment.type}
+                type={payment.type as "google-pay" | "mastercard" | "visa" | "paypal" | "cash"}
                 cardNumber={payment.cardNumber || ''}
               />
             </label>

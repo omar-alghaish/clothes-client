@@ -12,7 +12,7 @@ import { RootState } from "@/redux/store";
 import { Loader2 } from "lucide-react";
 import { toast, Toaster } from "sonner";
 import Link from "next/link";
-
+import { useRouter } from "next/navigation";
 const MainContent = () => {
   const [status, setStatus] = React.useState<
     "checkout" | "continuePayment" | "confirmPayment"
@@ -21,7 +21,7 @@ const MainContent = () => {
   const { data: cart, isLoading, isError, refetch } = useGetCartQuery({});
   const [clearCart, { isLoading: isClearingCart }] = useRemoveCartMutation();
   const [addOrder, { isLoading: isOrderProcessing }] = useAddOrderMutation();
-  
+  const router = useRouter();
   // Get address ID from Redux store
   const { addressId, paymentId } = useSelector((state: RootState) => state.order);
 
@@ -54,10 +54,10 @@ const MainContent = () => {
           return;
         }
         
-        if (!paymentId) {
-          toast.error("Please select a payment method");
-          return;
-        }
+        // if (!paymentId) {
+        //   toast.error("Please select a payment method");
+        //   return;
+        // }
         
         if (!cartId) {
           toast.error("Your cart is empty");
@@ -74,6 +74,7 @@ const MainContent = () => {
           
           await addOrder(orderData).unwrap();
           toast.success("Order placed successfully!");
+          router.push("/");
           
           // Redirect to success page or order history
           // You might want to use router.push('/order-success') here
