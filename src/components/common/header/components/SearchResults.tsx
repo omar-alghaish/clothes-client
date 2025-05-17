@@ -12,7 +12,7 @@ export const SearchResults: React.FC<SearchResultsProps> = ({ results, onClose, 
           <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
         </div>
       ) : results && results.length > 0 ? (
-        results.map((item, index) => (
+        results.map((item) => (
           <Link
             href={`/${item._id}`}
             key={item._id}

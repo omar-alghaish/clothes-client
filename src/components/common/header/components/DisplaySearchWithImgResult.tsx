@@ -1,5 +1,5 @@
 import { CartItem } from "../../cartItem";
-import { CartitemProps, DisplaySearchWithImgResultProps } from "./types";
+import {  DisplaySearchWithImgResultProps } from "./types";
 
 export const DisplaySearchWithImgResult: React.FC<DisplaySearchWithImgResultProps> = ({ 
   results, 

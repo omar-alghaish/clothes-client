@@ -10,7 +10,6 @@ import { useSearchQuery } from "@/redux/features/products/productsApi";
 const recently: string[] = ["Coats-Woman", "Skirts"];
 const trending: string[] = ["T-shirt", "Wide Leg", "White Shirt"];
 const popular: string[] = ["Dresses", "Hoodies", "Blouses", "Pants", "Shein"];
-const results: string[] = ["Summer Dress", "Winter Coat", "Designer Jeans"];
 
 export const SearchDialog: React.FC<SearchDialogProps> = ({ 
   isOpen, 

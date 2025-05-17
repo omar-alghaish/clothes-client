@@ -48,15 +48,19 @@ const MainContent = () => {
 
   const currentPage = Number(pageParam) || 1;
 
-  const { data, isLoading, error } = useGetProductsQuery({
+  // Add skip option to prevent initial loading
+  const { data, isLoading, isFetching, error } = useGetProductsQuery({
     category: categoryParams,
     color: colorParams,
     brand: brandParams,
     price: priceParams,
     page: currentPage,
     size: sizeParams || []
+  }, {
+    // This ensures the query is refetched when any of these parameters change
+    refetchOnMountOrArgChange: true
   });
-console.log(data)
+
   const totalItems = data?.totalItems || 0;
   const totalPages = data?.totalPages || 1;
 
@@ -95,13 +99,13 @@ console.log(data)
 
         {/* Main Content */}
         <div className="flex-1 flex flex-col gap-6">
-          {isLoading ? (
+          {(isLoading || isFetching) ? (
             <ActiveFiltersSkeleton />
           ) : (
             <ActiveFilters currentDisplay={currentDisplay} />
           )}
 
-          {isLoading ? (
+          {(isLoading || isFetching) ? (
             <ProductSkeleton />
           ) : error ? (
             <div className="h-screen w-full flex items-center justify-center">
@@ -113,7 +117,7 @@ console.log(data)
         </div>
       </div>
 
-      {!isLoading && <Pagination totalPages={totalPages} />}
+      {!isLoading && !isFetching && <Pagination totalPages={totalPages} />}
 
       <Banner />
     </div>
