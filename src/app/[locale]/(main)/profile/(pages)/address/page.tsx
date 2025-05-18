@@ -20,7 +20,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { toast, Toaster } from "sonner";
-
+import Loading from "@/app/[locale]/loading";
 
 interface Address {
   city: string;
@@ -161,7 +161,7 @@ const AddressPage = () => {
   if (isLoading) {
     return (
       <div className="p-4">
-        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+        <Loading />
       </div>
     );
   }

@@ -15,7 +15,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 const MainContent = () => {
   const [status, setStatus] = React.useState<
-    "checkout" | "continuePayment" | "confirmPayment"
+    "checkout" | "continuePayment" | "confirmPayment" | "addReview"
   >("checkout");
 
   const { data: cart, isLoading, isError, refetch } = useGetCartQuery({});
@@ -48,6 +48,7 @@ const MainContent = () => {
         setStatus("confirmPayment");
         break;
       case "confirmPayment":
+
         // Check if we have all required data
         if (!addressId) {
           toast.error("Please select a billing address");
@@ -83,7 +84,10 @@ const MainContent = () => {
           console.error("Failed to place order:", error);
           toast.error("Failed to place order. Please try again.");
         }
-        break;
+
+        case "addReview":
+          setStatus("checkout");
+          break;
     }
   };
 
@@ -147,6 +151,10 @@ const MainContent = () => {
     if (status === "continuePayment") {
       return <BillingDetails />;
     }
+
+    // if (status === "addReview") {
+    //   return <ReviewForm productDetails={productDetails} colors={colors} sizes={sizes} />;
+    // }
 
     return <PaymentMethod />;
   };

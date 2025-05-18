@@ -9,13 +9,11 @@ import { Separator } from '@/components/ui/separator';
 import { Button } from '@/components/ui/button';
 import background from '../../../../../../../assets/backgrounds/b5.jpg';
 import { useCancelOrderMutation } from '@/redux/features/profileOrders/statusApi';
-
-
-
+import Link from 'next/link';
 
 export interface IOrder {
   _id: string;
-  paymentMethod:string;
+  paymentMethod: string;
   totalPrice: string;
   estimatedDate: string;
   status: string;
@@ -48,15 +46,23 @@ const Order: FC<IOrderProps> = ({ order }) => {
     }
   };
 
-  const statusTextColor = order.status?.toLowerCase() === 'cancelled' ? 'text-red-500' : '';
-
-
+  const statusTextColor = order?.status?.toLowerCase() === 'cancelled' ? 'text-red-500' : '';
+  
+  // Function to safely get payment method as string
+  const getPaymentMethodString = (paymentMethod: string) => {
+    if (!paymentMethod) return "cash";
+    if (typeof paymentMethod === 'string') return paymentMethod;
+    if (typeof paymentMethod === 'object') {
+      // If it's an object with methodName property, return that
+      return "Unknown method";
+    }
+    return "cash";
+  };
 
   return (
     <>
       <Toaster />
       <div className="border rounded-md">
-        {/* Banner Section */}
         <div className="relative">
           <div className="w-full h-[300px] md:h-[150px]">
             <Image
@@ -69,13 +75,19 @@ const Order: FC<IOrderProps> = ({ order }) => {
           </div>
           <div className="absolute top-1/2 transform -translate-y-1/2 flex flex-wrap justify-between w-full px-4 lg:px-14 gap-4">
             {[
-              { label: 'Order ID', value: order._id.slice(0, 6) },
-              { label: 'Payment Method', value: order.paymentMethod || "cash" },
-              { label: 'Total Payment', value: order.totalPrice },
-              { label: 'Estimated Delivery Date', value: order.estimatedDate.slice(0, 10) },
+              { label: 'Order ID', value: order?._id ? order._id.slice(0, 6) : 'N/A' },
+              { 
+                label: 'Payment Method', 
+                value: getPaymentMethodString(order?.paymentMethod)
+              },
+              { label: 'Total Payment', value: order?.totalPrice || 'N/A' },
+              { 
+                label: 'Estimated Delivery Date', 
+                value: order?.estimatedDate ? order.estimatedDate.slice(0, 10) : 'N/A' 
+              },
               {
                 label: 'Status',
-                value: order.status || 'N/A',
+                value: order?.status || 'N/A',
                 className: statusTextColor,
               },
             ].map((item, index) => (
@@ -88,18 +100,19 @@ const Order: FC<IOrderProps> = ({ order }) => {
             ))}
           </div>
         </div>
-
-        {/* Items & Action Section */}
+        
         <div className="flex flex-col gap-6 p-6">
-          {order.items.map((item) => (
+          {order?.items?.map((item) => (
             <div key={item._id} className="space-y-6">
               <OrderItem {...item} />
               <Separator />
             </div>
           ))}
-
+          
           <div className="flex justify-between">
-            <Button>Track order</Button>
+            <Button>
+              <Link href={`/profile/orders/${order?._id}`}>Track order</Link>
+            </Button>
             <Button
               variant="link"
               className="text-destructive"

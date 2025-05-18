@@ -9,15 +9,23 @@ import {
   SelectItem,
 } from "@/components/ui/select";
 import { useGetOrdersQuery } from "@/redux/features/profileOrders/profileOrdersApi";
+import Loading from "@/app/[locale]/loading";
 
 
 const Page = () => {
-  const { data: ordersData } = useGetOrdersQuery();
+  const { data: ordersData , isLoading , error  } = useGetOrdersQuery();
   console.log(ordersData);
 
   const orders: IOrder[] = Array.isArray(ordersData?.data) ? ordersData.data : [];
   const [sortBy, setSortBy] = React.useState<"date-desc" | "date-asc" | "total-desc" | "total-asc">("date-desc");
 
+  if (isLoading) {
+    return <div><Loading /></div>;
+  }
+
+  if (error) {
+        return <div>Error</div>;
+  }
   const sortedOrders = [...orders].sort((a, b) => {
     switch (sortBy) {
       case "date-desc":
@@ -54,8 +62,10 @@ const Page = () => {
       </div>
 
       <div className="space-y-6">
-        {sortedOrders.map((order) => (
-          <Order order={order} key={order._id} />
+        {sortedOrders.map((order: IOrder) => (
+          <div key={order?._id}>
+            <Order order={order} />
+          </div>
         ))}
       </div>
     </div>
