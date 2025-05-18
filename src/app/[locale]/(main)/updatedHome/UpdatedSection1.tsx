@@ -23,7 +23,7 @@ const UpdatedSection1 = () => {
     const t = useTranslations("HomePage.section1");
 
     return (
-        <section className="relative w-full h-[60vh] md:h-[80vh] lg:h-screen">
+        <section className="relative w-full 100vh  lg:h-screen">
             <Swiper
                 pagination={{ dynamicBullets: true }}
                 autoplay={{

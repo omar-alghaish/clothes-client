@@ -56,7 +56,7 @@ export const MobileHeader = () => {
             </Link>
           </div>
         ) : (
-          <Button variant="outline">Login</Button>
+          <Button variant="outline"><Link href="/login">Login</Link></Button>
         )}
       </div>
 
