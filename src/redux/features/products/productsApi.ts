@@ -54,7 +54,14 @@ export const productsApi = createApi({
         getNewArrivalsProducts: builder.query({
             query: () => `/items/new-arrivals`,
         }),
+        addReview: builder.mutation({
+            query: (data: { itemId: string; rating: number; comment: string }) => ({
+                url: `/reviews`,
+                method: 'POST',
+                body: data
+            })
+        })
     }),
 });
 
-export const { useGetProductsQuery, useGetProductQuery, useGetFeaturedProductsQuery, useGetNewArrivalsProductsQuery, useSearchQuery } = productsApi;
+export const { useGetProductsQuery, useGetProductQuery, useGetFeaturedProductsQuery, useGetNewArrivalsProductsQuery, useAddReviewMutation, useSearchQuery } = productsApi;

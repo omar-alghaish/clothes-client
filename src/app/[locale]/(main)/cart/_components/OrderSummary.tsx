@@ -152,7 +152,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
 interface IOrderSummary {
-  status: "checkout" | "continuePayment" | "confirmPayment";
+  status: "checkout" | "continuePayment" | "confirmPayment" | "addReview";
   onNextStep: () => void;
   cart: {
     items: { price: number }[];
@@ -217,6 +217,7 @@ const OrderSummary: FC<IOrderSummary> = ({
         {status === "checkout" && "Proceed to Checkout"}
         {status === "continuePayment" && "Continue to Payment"}
         {status === "confirmPayment" && "Confirm Payment"}
+        {status === "addReview" && "Add Review"}
       </Button>
     </div>
   );
