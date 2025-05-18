@@ -1,9 +1,11 @@
 "use client";
 import React from "react";
 import Payment from "./_components/payment";
-import AddCard from "./_components/AddCard";
+// import AddCard from "./_components/AddCard";
 import { useGetPaymentQuery } from "@/redux/features/payment/paymentApi";
 import { Toaster } from "sonner";
+import Loading from "@/app/[locale]/loading";
+import AddCard from "../../../cart/_components/AddCard";
 
 interface PaymentData {
   _id: string;
@@ -22,6 +24,14 @@ interface PaymentResponse {
 const Page = () => {
   const { data: paymentCards, isLoading, isError } = useGetPaymentQuery<PaymentResponse>();
   const cards = paymentCards?.data?.paymentCards ?? [];
+
+  if (isLoading) {
+    return <div><Loading /></div>;
+  }
+
+  if (isError) {
+    return <div>Error</div>;
+  }
 
   return (
     <div className="space-y-6">
@@ -48,7 +58,7 @@ const Page = () => {
           ))
         )}
       </div>
-      <AddCard />
+      <AddCard onSuccess={() => {}} />
     </div>
   );
 }

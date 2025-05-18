@@ -14,7 +14,7 @@ interface PaymentData {
   cardType: string;
   cardNumber: string;
 }
-
+  
 // Payment icons mapping with static imports
 import { StaticImageData } from "next/image";
 
