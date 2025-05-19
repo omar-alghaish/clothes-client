@@ -1,7 +1,6 @@
 "use client";
 import Image from "next/image";
 import Link from "next/link";
-
 import { useGetBrandsQuery } from "@/redux/features/category/categoryApi";
 
 // Function to validate and fix URLs
@@ -26,9 +25,11 @@ const UpdatedSection2 = () => {
     const { data, isLoading, error } = useGetBrandsQuery();
     const brandsData = data?.data.brands;
     
-    // Filter brands to include only those with valid logo URLs
-    const brandsWithLogos = brandsData?.filter(brand => 
-        brand?.brandLogo && isValidUrl(brand.brandLogo)
+    // Filter brands to include only those with valid logo URLs AND active status set to true
+    const activeBrandsWithLogos = brandsData?.filter(brand =>
+        brand?.brandLogo && 
+        isValidUrl(brand.brandLogo) && 
+        brand.active === true  // Only include active brands
     ) || [];
     
     if (isLoading) {
@@ -51,29 +52,29 @@ const UpdatedSection2 = () => {
         );
     }
     
-    if (brandsWithLogos.length === 0) {
+    if (activeBrandsWithLogos.length === 0) {
         return (
             <section className="py-10">
                 <div className="container mx-auto text-center">
-                    <p>No brands with valid logos available</p>
+                    <p>No active brands with valid logos available</p>
                 </div>
             </section>
         );
     }
-
+    
     return (
         <section className="py-10">
             <div className="container mx-auto flex flex-wrap items-center justify-center gap-6 md:gap-10">
-                {brandsWithLogos.map((item, index) => (
+                {activeBrandsWithLogos.map((item, index) => (
                     <Link
                         key={item._id || index}
                         href={`/shop?brand=${encodeURIComponent(item?.brandName)}`}
                     >
                         <div className="w-20 md:w-24 lg:w-28 cursor-pointer">
                             {/* Using next/image safely with error handling */}
-                            <div className="relative w-full aspect-square">
+                            <div className="relative w-full aspect-video">
                                 <Image
-                                    className="object-contain grayscale-0 hover:grayscale transition-all duration-300"
+                                    className="w-full object-contain grayscale-0 hover:grayscale transition-all duration-300"
                                     src={item.brandLogo}
                                     fill={true}
                                     sizes="(max-width: 768px) 80px, (max-width: 1200px) 96px, 112px"

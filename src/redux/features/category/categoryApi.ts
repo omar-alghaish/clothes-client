@@ -19,6 +19,7 @@ interface BrandResponse {
             _id: string;
             brandName: string;
             brandLogo: string;
+            active: boolean;
         }>;
     };
 }
