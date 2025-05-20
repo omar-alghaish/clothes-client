@@ -19,7 +19,7 @@ export const SearchDialog: React.FC<SearchDialogProps> = ({
   const { isMobile } = useViewport();
   const [searchValue, setSearchValue] = useState<string>("");
   const { data, isLoading } = useSearchQuery(searchValue);
-  const searchResults = data?.data?.items;
+  const searchResults = data?.data?.items.slice(0, 5);
 
   const handleClose = () => {
     setIsOpen(false);
