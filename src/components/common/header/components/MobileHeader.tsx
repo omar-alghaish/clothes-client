@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Bell, Heart, Menu, ShoppingBasket, UserRound, X } from "lucide-react";
 import Logo from "../../logo";
 import LinksList from "./LinksList";
-import { ChangeLang } from "../../changeLang";
+// import { ChangeLang } from "../../changeLang";
 import ThemeToggle from "../../toggleTheme";
 import SearchInput from "./SearchInput";
 import Link from "next/link";
@@ -88,7 +88,7 @@ export const MobileHeader = () => {
             onNavigate={() => setIsMenuOpen(false)}
           />
 
-          <ChangeLang />
+          {/* <ChangeLang /> */}
         </div>
       </div>
     </div>

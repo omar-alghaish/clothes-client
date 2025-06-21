@@ -4,7 +4,7 @@ import { useLocale } from "next-intl";
 import { Button } from "@/components/ui/button";
 import LinksList from "./LinksList";
 import Logo from "../../logo";
-import { ChangeLang } from "../../changeLang";
+// import { ChangeLang } from "../../changeLang";
 import ThemeToggle from "../../toggleTheme";
 import SearchInput from "./SearchInput";
 import { Bell, Heart, ShoppingBasket, UserRound } from "lucide-react";
@@ -21,7 +21,7 @@ export const MainHeader = () => {
       <LinksList lang={locale} className="gap-8" />
       <div className="flex gap-6 items-center">
         <ThemeToggle />
-        <ChangeLang />
+        {/* <ChangeLang /> */}
         <SearchInput />
         {isUser ? (
           <div className="flex  gap-4 items-center ">
