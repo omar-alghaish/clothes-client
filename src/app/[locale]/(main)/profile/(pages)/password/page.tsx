@@ -4,7 +4,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { useFormik } from 'formik'
 import * as Yup from 'yup'
-import Link from 'next/link'
+// import Link from 'next/link'
 import { useChangePasswordMutation } from '@/redux/features/user/userApi';
 import { toast, Toaster } from 'sonner';
 
@@ -95,14 +95,14 @@ const PasswordChangePage = () => {
                 {formik.errors.currentPassword}
               </div>
             )}
-            <div className="text-center mt-4">
+            {/* <div className="text-center mt-4">
               <Link
                 href="/forgot-password"
                 className="text-sm text-destructive hover:underline"
               >
                 Forgot Password?
               </Link>
-            </div>
+            </div> */}
           </div>
 
           <div className="space-y-2">
