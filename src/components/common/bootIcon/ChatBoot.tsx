@@ -145,19 +145,16 @@ export default function FashionChatBot({
     }
 
     try {
-      // Format conversation history for the Gemini API
       const formattedHistory = conversationHistory.map(msg => ({
         role: msg.sender === "user" ? "user" : "model",
         parts: [{ text: msg.content }]
       }));
 
-      // Add the new user message
       formattedHistory.push({
         role: "user",
         parts: [{ text: prompt }]
       });
 
-      // Fashion assistant system prompt
       const systemPrompt = `You are a helpful and knowledgeable fashion assistant that helps users with style advice, outfit recommendations, and fashion tips. 
       
 IMPORTANT RULES:
@@ -228,13 +225,12 @@ Example response format:
       });
 
       const data = await response.json();
-      
+
       if (data.error) {
         console.error("Gemini API error:", data.error);
         return "Sorry, I encountered an error. Please try again later.";
       }
 
-      // Extract the response text
       if (data.candidates && data.candidates[0]?.content?.parts && data.candidates[0].content.parts[0]?.text) {
         return data.candidates[0].content.parts[0].text;
       } else {
@@ -275,14 +271,14 @@ Example response format:
   const handleSendMessage = async (message?: string) => {
     const messageContent = message || inputValue.trim();
     if ((!messageContent && !showWelcome) || isLoading) return;
-    
+
     const timestamp = new Date();
-    
+
     // Clear input immediately for better UX
     setInputValue("");
     setIsLoading(true);
     setIsTyping(true);
-  
+
     // Add user message
     const userMessage: Message = {
       id: Date.now().toString(),
@@ -290,10 +286,10 @@ Example response format:
       sender: "user",
       timestamp: timestamp,
     };
-  
+
     let currentConv: Conversation;
     let currentConvMessages: Message[] = [];
-  
+
     if (showWelcome || !currentConversationId) {
       // Create a new conversation if we're on the welcome screen
       const welcomeMessage: Message = {
@@ -302,7 +298,7 @@ Example response format:
         sender: "bot",
         timestamp: new Date(),
       };
-  
+
       const newConversation: Conversation = {
         id: Date.now().toString(),
         title: generateConversationTitle(messageContent),
@@ -310,36 +306,36 @@ Example response format:
         createdAt: timestamp,
         updatedAt: timestamp,
       };
-  
+
       // Update state immediately
       setShowWelcome(false);
       setCurrentConversationId(newConversation.id);
       setConversations(prev => [...prev, newConversation]);
-      
+
       currentConv = newConversation;
       currentConvMessages = [welcomeMessage, userMessage];
     } else {
       // Add to existing conversation
-      const updatedConversations = conversations.map((conv) => 
+      const updatedConversations = conversations.map((conv) =>
         conv.id === currentConversationId
-          ? { 
-              ...conv, 
-              messages: [...conv.messages, userMessage],
-              updatedAt: timestamp
-            }
+          ? {
+            ...conv,
+            messages: [...conv.messages, userMessage],
+            updatedAt: timestamp
+          }
           : conv
       );
-      
+
       setConversations(updatedConversations);
-      
+
       currentConv = updatedConversations.find(conv => conv.id === currentConversationId)!;
       currentConvMessages = currentConv.messages;
     }
-    
+
     try {
       // Get conversation history for context (limited to last 10 messages)
       const conversationHistory = currentConvMessages.slice(-10);
-      
+
       // Get response from Gemini API or fallback
       let botResponseText;
       try {
@@ -348,7 +344,7 @@ Example response format:
         console.error("Error getting AI response:", error);
         botResponseText = getFallbackResponse(userMessage.content);
       }
-  
+
       // Add bot response
       const botMessage: Message = {
         id: Date.now().toString(),
@@ -356,7 +352,7 @@ Example response format:
         sender: "bot",
         timestamp: new Date(),
       };
-  
+
       // Update conversations with bot response - ensure this is using the LATEST state
       setConversations(prevConversations => {
         return prevConversations.map(conv => {
@@ -372,7 +368,7 @@ Example response format:
       });
     } catch (error) {
       console.error("Error in send message flow:", error);
-      
+
       // Add error response if something went wrong
       const errorMessage: Message = {
         id: Date.now().toString(),
@@ -380,7 +376,7 @@ Example response format:
         sender: "bot",
         timestamp: new Date(),
       };
-  
+
       setConversations(prevConversations => {
         return prevConversations.map(conv => {
           if (conv.id === (currentConv.id)) {
@@ -461,7 +457,7 @@ Example response format:
   const formatMessageContent = (content: string) => {
     // First, replace double asterisks with <strong> tags
     const formattedContent = content.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-    
+
     // Now split by lines and render appropriately
     return formattedContent.split("\n").map((text, i) => {
       // Check if text is a bullet point (starts with * or •)
@@ -469,14 +465,14 @@ Example response format:
         return (
           <div key={i} className="flex items-start gap-2 my-1">
             <div className="min-w-4 mt-1">•</div>
-            <p className="text-sm sm:text-base flex-1" 
-               dangerouslySetInnerHTML={{ 
-                 __html: text.trim().replace(/^[*•]\s*/, '') 
-               }} 
+            <p className="text-sm sm:text-base flex-1"
+              dangerouslySetInnerHTML={{
+                __html: text.trim().replace(/^[*•]\s*/, '')
+              }}
             />
           </div>
         );
-      } 
+      }
       // Check if text is a heading (starts with #)
       else if (text.trim().startsWith('#')) {
         const matchResult = text.trim().match(/^#+/);
@@ -484,15 +480,15 @@ Example response format:
         const content = text.trim().replace(/^#+\s*/, '');
         return (
           <p key={i} className={`font-bold text-sm sm:text-base ${level === 1 ? 'text-lg sm:text-xl' : ''} my-1`}
-             dangerouslySetInnerHTML={{ __html: content }} 
+            dangerouslySetInnerHTML={{ __html: content }}
           />
         );
       }
       // Normal text
       else {
         return (
-          <p key={i} className="text-sm sm:text-base my-1" 
-             dangerouslySetInnerHTML={{ __html: text }} 
+          <p key={i} className="text-sm sm:text-base my-1"
+            dangerouslySetInnerHTML={{ __html: text }}
           />
         );
       }
@@ -640,8 +636,8 @@ Example response format:
             </div>
 
             <div className="w-full max-w-md mb-6">
-              <Card 
-                className="p-3 hover:shadow-md transition-shadow cursor-pointer" 
+              <Card
+                className="p-3 hover:shadow-md transition-shadow cursor-pointer"
                 onClick={() => handleSendMessage("What should I wear to a wedding?")}
               >
                 <CardContent className="p-1 text-center">
@@ -664,11 +660,10 @@ Example response format:
                 className={`flex ${message.sender === "user" ? "justify-end" : "justify-start"}`}
               >
                 <div
-                  className={`max-w-[85%] rounded-xl px-3 py-2 sm:px-4 sm:py-3 ${
-                    message.sender === "user"
+                  className={`max-w-[85%] rounded-xl px-3 py-2 sm:px-4 sm:py-3 ${message.sender === "user"
                       ? "bg-blue-100 text-black ml-4"
                       : "bg-gray-100 text-black mr-4"
-                  }`}
+                    }`}
                 >
                   <div className="formatted-message">
                     {formatMessageContent(message.content)}
@@ -679,7 +674,7 @@ Example response format:
                 </div>
               </div>
             ))}
-            
+
             {isTyping && (
               <div className="flex justify-start">
                 <div className="max-w-[85%] rounded-xl px-3 py-2 sm:px-4 sm:py-3 bg-gray-100 text-black mr-4">
@@ -691,7 +686,7 @@ Example response format:
                 </div>
               </div>
             )}
-            
+
             <div ref={messagesEndRef} />
           </div>
         )}
